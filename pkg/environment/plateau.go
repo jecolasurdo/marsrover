@@ -5,9 +5,12 @@ import (
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
 )
 
+type objectStore map[coordinate.Point][]objectiface.Objecter
+
 // Plateau is a rectangular maritan environment.
 type Plateau struct {
 	dimensions coordinate.Point
+	objects    objectStore
 }
 
 // NewPlateau instantiates a new Plateau and returns a reference to that
@@ -15,6 +18,7 @@ type Plateau struct {
 func NewPlateau(dimensions coordinate.Point) *Plateau {
 	return &Plateau{
 		dimensions: dimensions,
+		objects:    make(objectStore),
 	}
 }
 
@@ -26,7 +30,7 @@ func (p *Plateau) GetDimensions() coordinate.Point {
 // PlaceObject inserts a new object into the environment at some position.
 // The environment will enforce unique object ID's for consistency.
 func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.Point) error {
-	panic("not implemented")
+	return nil
 }
 
 // MoveObject moves an object from one point in the environment to another.
@@ -37,5 +41,5 @@ func (p *Plateau) MoveObject(object objectiface.Objecter, newPosition coordinate
 // ShowObjects returns a sparse map of points within the terrain that
 // contain objects.
 func (p *Plateau) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
-	panic("not implemented")
+	return p.objects
 }
