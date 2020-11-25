@@ -36,6 +36,6 @@ func (p *Plateau) MoveObject(object objectiface.Objecter, newPosition coordinate
 
 // ShowObjects returns a sparse map of points within the terrain that
 // contain objects.
-func ShowObjects() map[coordinate.Point][]objectiface.Objecter {
+func (p *Plateau) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
 	panic("not implemented")
 }

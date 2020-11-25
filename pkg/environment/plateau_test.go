@@ -3,6 +3,8 @@ package environment_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment"
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
@@ -47,9 +49,7 @@ func Test_PlateauShowObjects(t *testing.T) {
 
 			actResult := p.ShowObjects()
 
-			if actResult != testCase.expResult {
-				t.Fail()
-			}
+			assert.Equal(t, testCase.expResult, actResult)
 		})
 	}
 
