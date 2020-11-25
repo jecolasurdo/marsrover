@@ -30,6 +30,11 @@ func (p *Plateau) GetDimensions() coordinate.Point {
 // PlaceObject inserts a new object into the environment at some position.
 // The environment will enforce unique object ID's for consistency.
 func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.Point) error {
+	if objectList, found := p.objects[position]; found {
+		objectList = append(objectList, object)
+	} else {
+		p.objects[position] = []objectiface.Objecter{object}
+	}
 	return nil
 }
 
