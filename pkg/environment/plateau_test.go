@@ -64,3 +64,12 @@ func Test_PlateauShowObjects(t *testing.T) {
 		assert.Equal(t, mockObjects, actResult)
 	})
 }
+
+func Test_PlateauPlaceObjects(t *testing.T) {
+	// nil object returns an error
+	// illegal coordinate returns an error
+	// object already in environment returns an error (same object different coordinate)
+	// object arleady in env... (same objects sharing coordinate)
+	// placing an object places the object
+	// multiple objects can be placed at the same location
+}
