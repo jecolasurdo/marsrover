@@ -10,7 +10,7 @@ type Environmenter interface {
 	// GetDimenstions returns the dimension of the environment.
 	GetDimensions() coordinate.Point
 
-	// Place object inserts a new object into the environment at some position.
+	// PlaceObject inserts a new object into the environment at some position.
 	// The environment will enforce unique object ID's for consistency.
 	PlaceObject(objectiface.Objecter, coordinate.Point) error
 
