@@ -24,45 +24,43 @@ func Test_PlateauGetDimensions(t *testing.T) {
 	}
 }
 
-// We expect ShowObjects to return an empty map if there are no objects in the
-// environment.
-func Test_PlateauShowObjects_Empty(t *testing.T) {
-	p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+func Test_PlateauShowObjects(t *testing.T) {
+	t.Run("returns empty map if no objects present", func(t *testing.T) {
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
 
-	actResult := p.ShowObjects()
-	expResult := make(map[coordinate.Point][]objectiface.Objecter)
+		actResult := p.ShowObjects()
+		expResult := make(map[coordinate.Point][]objectiface.Objecter)
 
-	assert.Equal(t, expResult, actResult)
-}
+		assert.Equal(t, expResult, actResult)
+	})
 
-// We expect ShowObjects to return a map of objects if objects have been added
-// to the environment.
-func Test_PlateauShowObjects_NotEmpty(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	t.Run("returns object map if objects exist", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-	mockObject1 := mock_objectiface.NewMockObjecter(ctrl)
-	mockObject1.EXPECT().ID().Return("1").AnyTimes()
+		mockObject1 := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject1.EXPECT().ID().Return("1").AnyTimes()
 
-	mockObject2 := mock_objectiface.NewMockObjecter(ctrl)
-	mockObject2.EXPECT().ID().Return("2").AnyTimes()
+		mockObject2 := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject2.EXPECT().ID().Return("2").AnyTimes()
 
-	mockObjects := map[coordinate.Point][]objectiface.Objecter{
-		coordinate.Point{X: 1, Y: 2}: []objectiface.Objecter{mockObject1},
-		coordinate.Point{X: 2, Y: 3}: []objectiface.Objecter{mockObject2},
-	}
+		mockObjects := map[coordinate.Point][]objectiface.Objecter{
+			coordinate.Point{X: 1, Y: 2}: []objectiface.Objecter{mockObject1},
+			coordinate.Point{X: 2, Y: 3}: []objectiface.Objecter{mockObject2},
+		}
 
-	p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-	for position, objects := range mockObjects {
-		for _, object := range objects {
-			err := p.PlaceObject(object, position)
-			if err != nil {
-				panic(err)
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		for position, objects := range mockObjects {
+			for _, object := range objects {
+				err := p.PlaceObject(object, position)
+				if err != nil {
+					panic(err)
+				}
 			}
 		}
-	}
 
-	actResult := p.ShowObjects()
+		actResult := p.ShowObjects()
 
-	assert.Equal(t, mockObjects, actResult)
+		assert.Equal(t, mockObjects, actResult)
+	})
 }
