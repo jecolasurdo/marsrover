@@ -4,18 +4,18 @@ import "github.com/jecolasurdo/marsrover/pkg/coordinate"
 
 // Plateau is a rectangular maritan environment.
 type Plateau struct {
-	size coordinate.Point
+	dimensions coordinate.Point
 }
 
 // NewPlateau instantiates a new Plateau and returns a reference to that
 // instance.
-func NewPlateau(size coordinate.Point) *Plateau {
+func NewPlateau(dimensions coordinate.Point) *Plateau {
 	return &Plateau{
-		size: size,
+		dimensions: dimensions,
 	}
 }
 
 // GetDimensions returns the dimension of the environment.
 func (p *Plateau) GetDimensions() coordinate.Point {
-	panic("not implemented")
+	return p.dimensions
 }
