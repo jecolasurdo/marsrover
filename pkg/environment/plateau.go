@@ -29,8 +29,23 @@ func (p *Plateau) GetDimensions() coordinate.Point {
 	return p.dimensions
 }
 
-// PlaceObject inserts a new object into the environment at some position.
-// The environment will enforce unique object ID's for consistency.
+// PlaceObject attempts to insert a new object into the environment at the
+// specified position.
+//
+// The environment enforces the following rules when placing objects:
+//   - nil objects cannot be placed in the environment.
+//   - Objects can only be placed within the bounds of the environment.
+//   - Each object ID can only exist once within the environment.
+//   - Multiple objects are allowed to share the same position in the
+//     environment. (e.g. It is each object's responsibility to determine
+//     whether or not it can occupy the same space as another object; this is
+//     not enforced by the environment itself.)
+//
+// In each of the above cases, PlaceObject will return an error if the rule is
+// violated.
+//
+// PlaceObject will return nil if the object has been successfully placed at the
+// specified position.
 func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.Point) error {
 	if object == nil {
 		return fmt.Errorf("a nil object cannot be placed in the environment")

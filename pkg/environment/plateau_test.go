@@ -169,6 +169,11 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		err = p.PlaceObject(mockObjectB, locationTwo)
 		assert.NoError(t, err)
 	})
+}
 
-	// placing an object places the object
+func Test_PlateauMoveObject(t *testing.T) {
+	// An object cannot be moved to an coordinate outside of the environment.
+	// Moving an object effectively moves the object
+	// Moving an object to a position where another object exists does not
+	//     disturb the other object
 }
