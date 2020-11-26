@@ -93,8 +93,8 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		for _, testCase := range testCases {
 			t.Run(testCase.Name, func(t *testing.T) {
 				ctrl := gomock.NewController(t)
-				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 				defer ctrl.Finish()
+				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 
 				p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
 				err := p.PlaceObject(mockObject, coordinate.Point{X: testCase.X, Y: testCase.Y})
@@ -103,8 +103,25 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		}
 	})
 
+	t.Run("an object can only appear once in an environment", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockObject := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject.EXPECT().ID().Return("A").AnyTimes()
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		err := p.PlaceObject(mockObject, coordinate.Point{X: 1, Y: 1})
+		assert.NoError(t, err)
+
+		err = p.PlaceObject(mockObject, coordinate.Point{X: 1, Y: 1})
+		assert.EqualError(t, err, "object with id 'A' already exists within the environment")
+	})
+
 	// object already in environment returns an error (same object different coordinate)
 	// object arleady in env... (same objects sharing coordinate)
-	// placing an object places the object
+
 	// multiple objects can be placed at the same location
+	// multiple objects at different locations?
+	// placing an object places the object
 }
