@@ -79,13 +79,23 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 			Y    int
 		}{
 			{
-				Name: "above upper bound",
+				Name: "X above upper",
 				X:    11,
+				Y:    9,
+			},
+			{
+				Name: "Y above upper",
+				X:    9,
 				Y:    11,
 			},
 			{
-				Name: "below lower bound",
+				Name: "x below lower",
 				X:    -1,
+				Y:    1,
+			},
+			{
+				Name: "y below lower",
+				X:    1,
 				Y:    -1,
 			},
 		}
