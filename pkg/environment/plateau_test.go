@@ -149,6 +149,26 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	// multiple objects at different locations?
+	t.Run("multiple objects can be placed at different locations", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockObjectA := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectA.EXPECT().ID().Return("A").AnyTimes()
+
+		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+
+		locationOne := coordinate.Point{X: 1, Y: 1}
+		err := p.PlaceObject(mockObjectA, locationOne)
+		assert.NoError(t, err)
+
+		locationTwo := coordinate.Point{X: 2, Y: 2}
+		err = p.PlaceObject(mockObjectB, locationTwo)
+		assert.NoError(t, err)
+	})
+
 	// placing an object places the object
 }
