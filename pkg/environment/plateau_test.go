@@ -128,10 +128,27 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		assert.EqualError(t, err, "object with ID 'A' already exists within the environment")
 	})
 
-	// object already in environment returns an error (same object different coordinate)
-	// object arleady in env... (same objects sharing coordinate)
+	t.Run("multiple objects can be placed at the same location", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-	// multiple objects can be placed at the same location
+		mockObjectA := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectA.EXPECT().ID().Return("A").AnyTimes()
+
+		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
+
+		sharedLocation := coordinate.Point{X: 1, Y: 1}
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+
+		err := p.PlaceObject(mockObjectA, sharedLocation)
+		assert.NoError(t, err)
+
+		err = p.PlaceObject(mockObjectB, sharedLocation)
+		assert.NoError(t, err)
+	})
+
 	// multiple objects at different locations?
 	// placing an object places the object
 }
