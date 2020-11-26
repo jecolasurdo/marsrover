@@ -1,13 +1,15 @@
 package environment
 
 import (
+	"fmt"
+
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
 )
 
 type objectStore map[coordinate.Point][]objectiface.Objecter
 
-// Plateau is a rectangular maritan environment.
+// Plateau is a rectangular martian environment.
 type Plateau struct {
 	dimensions coordinate.Point
 	objects    objectStore
@@ -30,6 +32,10 @@ func (p *Plateau) GetDimensions() coordinate.Point {
 // PlaceObject inserts a new object into the environment at some position.
 // The environment will enforce unique object ID's for consistency.
 func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.Point) error {
+	if object == nil {
+		return fmt.Errorf("a nil object cannot be placed in the environment")
+	}
+
 	if objectList, found := p.objects[position]; found {
 		objectList = append(objectList, object)
 	} else {
