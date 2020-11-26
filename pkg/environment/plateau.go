@@ -36,6 +36,11 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return fmt.Errorf("a nil object cannot be placed in the environment")
 	}
 
+	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
+		position.Y < p.dimensions.Y || position.X < p.dimensions.X {
+		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
+	}
+
 	if objectList, found := p.objects[position]; found {
 		objectList = append(objectList, object)
 	} else {
