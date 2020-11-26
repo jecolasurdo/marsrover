@@ -41,6 +41,14 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
 	}
 
+	for _, existingObjects := range p.objects {
+		for _, existingObject := range existingObjects {
+			if existingObject.ID() == object.ID() {
+				return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
+			}
+		}
+	}
+
 	if objectList, found := p.objects[position]; found {
 		objectList = append(objectList, object)
 	} else {

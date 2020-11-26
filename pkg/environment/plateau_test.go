@@ -125,7 +125,7 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = p.PlaceObject(mockObject, coordinate.Point{X: 1, Y: 1})
-		assert.EqualError(t, err, "object with id 'A' already exists within the environment")
+		assert.EqualError(t, err, "object with ID 'A' already exists within the environment")
 	})
 
 	// object already in environment returns an error (same object different coordinate)
