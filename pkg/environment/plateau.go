@@ -51,9 +51,9 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return fmt.Errorf("a nil object cannot be placed in the environment")
 	}
 
-	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
-		position.Y < 0 || position.X < 0 {
-		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
+	err := p.verifyPositionIsLegal(position)
+	if err != nil {
+		return err
 	}
 
 	for _, existingObjects := range p.objects {
@@ -75,11 +75,27 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 // RecordMovement records the movement an object from one position in the
 // environment to another.
 func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordinate.Point) error {
-	panic("not implemented")
+	if object == nil {
+		return fmt.Errorf("cannot record the movement of a nil object")
+	}
+
+	err := p.verifyPositionIsLegal(newPosition)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // ShowObjects returns a sparse map of points within the terrain that
 // contain objects.
 func (p *Plateau) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
 	return p.objects
+}
+
+func (p *Plateau) verifyPositionIsLegal(position coordinate.Point) error {
+	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
+		position.Y < 0 || position.X < 0 {
+		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
+	}
+	return nil
 }

@@ -172,6 +172,12 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 }
 
 func Test_PlateauRecordMovement(t *testing.T) {
+	t.Run("cannot record the movement of a nil object", func(t *testing.T) {
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		err := p.RecordMovement(nil, coordinate.Point{X: 3, Y: 3})
+		assert.Error(t, err, "cannot record the movement of a nil object")
+	})
+
 	t.Run("An object cannot be moved to an coordinate outside of the environment.", func(t *testing.T) {
 		testCases := []struct {
 			Name string
@@ -216,7 +222,6 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		}
 	})
 
-	// a nil object cannot be moved (returns error)
 	// you cannot move an object that doesn't exist within the environment
 	// Moving an object effectively moves the object
 	// Moving an object to a position where another object exists does not
