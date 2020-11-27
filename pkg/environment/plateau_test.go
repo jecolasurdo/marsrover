@@ -172,7 +172,52 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 }
 
 func Test_PlateauRecordMovement(t *testing.T) {
-	// An object cannot be moved to an coordinate outside of the environment.
+	t.Run("An object cannot be moved to an coordinate outside of the environment.", func(t *testing.T) {
+		testCases := []struct {
+			Name string
+			X    int
+			Y    int
+		}{
+			{
+				Name: "X above upper",
+				X:    11,
+				Y:    9,
+			},
+			{
+				Name: "Y above upper",
+				X:    9,
+				Y:    11,
+			},
+			{
+				Name: "x below lower",
+				X:    -1,
+				Y:    1,
+			},
+			{
+				Name: "y below lower",
+				X:    1,
+				Y:    -1,
+			},
+		}
+
+		for _, testCase := range testCases {
+			t.Run(testCase.Name, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				defer ctrl.Finish()
+				mockObject := mock_objectiface.NewMockObjecter(ctrl)
+
+				p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+				err := p.PlaceObject(mockObject, coordinate.Point{X: 5, Y: 5})
+				assert.NoError(t, err)
+
+				err = p.RecordMovement(mockObject, coordinate.Point{X: testCase.X, Y: testCase.Y})
+				assert.EqualError(t, err, "an object cannot be placed outside the bounds of the environment")
+			})
+		}
+	})
+
+	// a nil object cannot be moved (returns error)
+	// you cannot move an object that doesn't exist within the environment
 	// Moving an object effectively moves the object
 	// Moving an object to a position where another object exists does not
 	//     disturb the other object
