@@ -171,7 +171,7 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 	})
 }
 
-func Test_PlateauMoveObject(t *testing.T) {
+func Test_PlateauRecordMovement(t *testing.T) {
 	// An object cannot be moved to an coordinate outside of the environment.
 	// Moving an object effectively moves the object
 	// Moving an object to a position where another object exists does not

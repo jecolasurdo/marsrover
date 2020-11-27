@@ -72,8 +72,9 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 	return nil
 }
 
-// MoveObject moves an object from one point in the environment to another.
-func (p *Plateau) MoveObject(object objectiface.Objecter, newPosition coordinate.Point) error {
+// RecordMovement records the movement an object from one position in the
+// environment to another.
+func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordinate.Point) error {
 	panic("not implemented")
 }
 

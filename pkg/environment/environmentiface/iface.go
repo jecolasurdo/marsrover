@@ -14,8 +14,9 @@ type Environmenter interface {
 	// The environment will enforce unique object ID's for consistency.
 	PlaceObject(objectiface.Objecter, coordinate.Point) error
 
-	// MoveObject moves an object from one point in the environment to another.
-	MoveObject(objectiface.Objecter, coordinate.Point) error
+	// RecordMovement records the movement an object from one position in the
+	// environment to another.
+	RecordMovement(objectiface.Objecter, coordinate.Point) error
 
 	// ShowObjects returns a sparse map of points within the terrain that
 	// contain objects.
