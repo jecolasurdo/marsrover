@@ -83,6 +83,21 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordi
 	if err != nil {
 		return err
 	}
+
+	found := false
+outer:
+	for _, oo := range p.objects {
+		for _, o := range oo {
+			if o.ID() == object.ID() {
+				found = true
+				break outer
+			}
+		}
+	}
+	if !found {
+		return fmt.Errorf("cannot move an object that has not been placed in the environment")
+	}
+
 	return nil
 }
 

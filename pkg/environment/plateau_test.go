@@ -222,8 +222,19 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		}
 	})
 
-	// you cannot move an object that doesn't exist within the environment
-	// Moving an object effectively moves the object
+	t.Run("cannot move an object that doesn't exist within the environment", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		mockObject := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject.EXPECT().ID().Return("A").AnyTimes()
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		err := p.RecordMovement(mockObject, coordinate.Point{X: 5, Y: 5})
+
+		assert.EqualError(t, err, "cannot move an object that has not been placed in the environment")
+	})
+
+	// 	// Moving an object effectively moves the object
 	// Moving an object to a position where another object exists does not
 	//     disturb the other object
 }
