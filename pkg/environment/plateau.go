@@ -56,12 +56,8 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return err
 	}
 
-	for _, existingObjects := range p.objects {
-		for _, existingObject := range existingObjects {
-			if existingObject.ID() == object.ID() {
-				return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
-			}
-		}
+	if p.objectExistsInEnvironment(object) {
+		return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
 	}
 
 	if objectList, found := p.objects[position]; found {
@@ -84,17 +80,7 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordi
 		return err
 	}
 
-	found := false
-outer:
-	for _, oo := range p.objects {
-		for _, o := range oo {
-			if o.ID() == object.ID() {
-				found = true
-				break outer
-			}
-		}
-	}
-	if !found {
+	if !p.objectExistsInEnvironment(object) {
 		return fmt.Errorf("cannot move an object that has not been placed in the environment")
 	}
 
@@ -113,4 +99,15 @@ func (p *Plateau) verifyPositionIsLegal(position coordinate.Point) error {
 		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
 	}
 	return nil
+}
+
+func (p *Plateau) objectExistsInEnvironment(objectToFind objectiface.Objecter) bool {
+	for _, objects := range p.objects {
+		for _, object := range objects {
+			if object.ID() == objectToFind.ID() {
+				return true
+			}
+		}
+	}
+	return false
 }
