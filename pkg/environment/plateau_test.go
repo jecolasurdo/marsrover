@@ -176,6 +176,14 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		locationTwo := coordinate.Point{X: 2, Y: 2}
 		err = p.PlaceObject(mockObjectB, locationTwo)
 		assert.NoError(t, err)
+
+		foundA, objectAPosition := p.FindObject(mockObjectA)
+		assert.True(t, foundA)
+		assert.Equal(t, locationOne, objectAPosition.Position)
+
+		foundB, objectBPosition := p.FindObject(mockObjectB)
+		assert.True(t, foundB)
+		assert.Equal(t, locationTwo, objectBPosition.Position)
 	})
 }
 

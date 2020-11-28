@@ -144,6 +144,7 @@ func (p *Plateau) removeObjectUnchecked(object objectiface.Objecter) {
 func (p *Plateau) placeObjectUnchecked(object objectiface.Objecter, newPosition coordinate.Point) {
 	if objectList, found := p.objects[newPosition]; found {
 		objectList = append(objectList, object)
+		p.objects[newPosition] = objectList
 	} else {
 		p.objects[newPosition] = []objectiface.Objecter{object}
 	}
