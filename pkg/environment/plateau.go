@@ -61,11 +61,7 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
 	}
 
-	if objectList, found := p.objects[position]; found {
-		objectList = append(objectList, object)
-	} else {
-		p.objects[position] = []objectiface.Objecter{object}
-	}
+	p.placeObjectUnchecked(object, position)
 	return nil
 }
 
@@ -81,9 +77,13 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordi
 		return err
 	}
 
-	if found, _ := p.FindObject(object); !found {
+	found, objectPosition := p.FindObject(object)
+	if !found {
 		return fmt.Errorf("cannot move an object that has not been placed in the environment")
 	}
+
+	p.removeObjectUnchecked(objectPosition.Object)
+	p.placeObjectUnchecked(object, newPosition)
 
 	return nil
 }
@@ -117,4 +117,34 @@ func (p *Plateau) verifyPositionIsLegal(position coordinate.Point) error {
 		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
 	}
 	return nil
+}
+
+// removeObjectUnchecked removes an object from the environment without checking
+// if the object already exists nor performing any other validity checks.
+func (p *Plateau) removeObjectUnchecked(object objectiface.Objecter) {
+	for position, existingObjects := range p.objects {
+		objectsAtCurrentPosition := []objectiface.Objecter{}
+		for _, existingObject := range existingObjects {
+			if existingObject.ID() != object.ID() {
+				objectsAtCurrentPosition = append(objectsAtCurrentPosition, existingObject)
+			}
+		}
+		if len(objectsAtCurrentPosition) == 0 {
+			delete(p.objects, position)
+		} else {
+			p.objects[position] = objectsAtCurrentPosition
+		}
+	}
+}
+
+// placeObjectUnchecked places the specified object at the specified position.
+// This method places an object into the environment without checking the validity
+// of the specified coordinates, without checking if the object is nil, and
+// without checking if the object already exists elsewhere in the environment.
+func (p *Plateau) placeObjectUnchecked(object objectiface.Objecter, newPosition coordinate.Point) {
+	if objectList, found := p.objects[newPosition]; found {
+		objectList = append(objectList, object)
+	} else {
+		p.objects[newPosition] = []objectiface.Objecter{object}
+	}
 }
