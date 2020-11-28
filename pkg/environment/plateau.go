@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
+	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
 )
 
@@ -56,7 +57,7 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 		return err
 	}
 
-	if p.objectExistsInEnvironment(object) {
+	if found, _ := p.FindObject(object); found {
 		return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
 	}
 
@@ -80,7 +81,7 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordi
 		return err
 	}
 
-	if !p.objectExistsInEnvironment(object) {
+	if found, _ := p.FindObject(object); !found {
 		return fmt.Errorf("cannot move an object that has not been placed in the environment")
 	}
 
@@ -93,21 +94,27 @@ func (p *Plateau) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
 	return p.objects
 }
 
+// FindObject searches the environment for an object (via the object's ID)
+// and if the object is found, returns true and the object and its position.
+// If the object is not found in the environment, FindObject returns false.
+func (p *Plateau) FindObject(objectToFind objectiface.Objecter) (bool, *environmenttypes.ObjectPosition) {
+	for position, objects := range p.objects {
+		for _, object := range objects {
+			if object.ID() == objectToFind.ID() {
+				return true, &environmenttypes.ObjectPosition{
+					Position: position,
+					Object:   object,
+				}
+			}
+		}
+	}
+	return false, nil
+}
+
 func (p *Plateau) verifyPositionIsLegal(position coordinate.Point) error {
 	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
 		position.Y < 0 || position.X < 0 {
 		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
 	}
 	return nil
-}
-
-func (p *Plateau) objectExistsInEnvironment(objectToFind objectiface.Objecter) bool {
-	for _, objects := range p.objects {
-		for _, object := range objects {
-			if object.ID() == objectToFind.ID() {
-				return true
-			}
-		}
-	}
-	return false
 }

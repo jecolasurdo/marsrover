@@ -234,7 +234,66 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		assert.EqualError(t, err, "cannot move an object that has not been placed in the environment")
 	})
 
-	// 	// Moving an object effectively moves the object
+	// t.Run("moving an object effectively moves the object", func(t *testing.T) {
+	// 	ctrl := gomock.NewController(t)
+	// 	defer ctrl.Finish()
+
+	// 	mockObject := mock_objectiface.NewMockObjecter(ctrl)
+	// 	mockObject.EXPECT().ID().Return("A").AnyTimes()
+
+	// 	p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+	// 	initialPosition:= coordinate.Point{X: 4, Y: 5}
+	// 	err:= p.PlaceObject(mockObject, initialPosition)
+	// 	assert.NoError(t, err)
+
+	// 	newPosition:= coordinate.Point{X: 6, Y: 7}
+	// 	err = p.RecordMovement(mockObject, newPosition)
+
+	// 	objects:= p.ShowObjects()
+
+	// }
+
 	// Moving an object to a position where another object exists does not
 	//     disturb the other object
+}
+
+func Test_PlateauFindObject(t *testing.T) {
+	t.Run("finding a nil object returns false, nil", func(t *testing.T) {
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		found, objectPosition := p.FindObject(nil)
+		assert.False(t, found)
+		assert.Nil(t, objectPosition)
+	})
+
+	t.Run("finding a missing object returns false, nil", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		mockObject := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject.EXPECT().ID().Return("A").AnyTimes()
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		found, object := p.FindObject(mockObject)
+
+		assert.False(t, found)
+		assert.Nil(t, object)
+	})
+
+	t.Run("finding an existing object returns true, and a valid ObjectPosition", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		mockObject := mock_objectiface.NewMockObjecter(ctrl)
+		objectID := "A"
+		mockObject.EXPECT().ID().Return(objectID).AnyTimes()
+
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		position := coordinate.Point{X: 4, Y: 5}
+		err := p.PlaceObject(mockObject, position)
+		assert.NoError(t, err)
+
+		found, objectPosition := p.FindObject(mockObject)
+
+		assert.True(t, found)
+		assert.Equal(t, objectID, objectPosition.Object.ID())
+		assert.Equal(t, position, objectPosition.Position)
+	})
 }

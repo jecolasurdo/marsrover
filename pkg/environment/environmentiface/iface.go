@@ -2,6 +2,7 @@ package environmentiface
 
 import (
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
+	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
 )
 
@@ -21,4 +22,9 @@ type Environmenter interface {
 	// ShowObjects returns a sparse map of points within the terrain that
 	// contain objects.
 	ShowObjects() map[coordinate.Point][]objectiface.Objecter
+
+	// FindObject searches the environment for an object (via the object's ID)
+	// and if the object is found, returns true and the object and its position.
+	// If the object is not found in the environment, FindObject returns false.
+	FindObject(objectiface.Objecter) (bool, *environmenttypes.ObjectPosition)
 }
