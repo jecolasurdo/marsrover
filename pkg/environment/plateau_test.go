@@ -234,24 +234,25 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		assert.EqualError(t, err, "cannot move an object that has not been placed in the environment")
 	})
 
-	// t.Run("moving an object effectively moves the object", func(t *testing.T) {
-	// 	ctrl := gomock.NewController(t)
-	// 	defer ctrl.Finish()
+	t.Run("moving an object effectively moves the object", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
 
-	// 	mockObject := mock_objectiface.NewMockObjecter(ctrl)
-	// 	mockObject.EXPECT().ID().Return("A").AnyTimes()
+		mockObject := mock_objectiface.NewMockObjecter(ctrl)
+		mockObject.EXPECT().ID().Return("A").AnyTimes()
 
-	// 	p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-	// 	initialPosition:= coordinate.Point{X: 4, Y: 5}
-	// 	err:= p.PlaceObject(mockObject, initialPosition)
-	// 	assert.NoError(t, err)
+		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		initialPosition := coordinate.Point{X: 4, Y: 5}
+		err := p.PlaceObject(mockObject, initialPosition)
+		assert.NoError(t, err)
 
-	// 	newPosition:= coordinate.Point{X: 6, Y: 7}
-	// 	err = p.RecordMovement(mockObject, newPosition)
+		newPosition := coordinate.Point{X: 6, Y: 7}
+		err = p.RecordMovement(mockObject, newPosition)
 
-	// 	objects:= p.ShowObjects()
-
-	// }
+		found, objectPosition := p.FindObject(mockObject)
+		assert.True(t, found)
+		assert.Equal(t, newPosition, objectPosition.Position)
+	})
 
 	// Moving an object to a position where another object exists does not
 	//     disturb the other object
