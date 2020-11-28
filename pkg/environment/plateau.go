@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
+	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
 )
@@ -149,3 +150,6 @@ func (p *Plateau) placeObjectUnchecked(object objectiface.Objecter, newPosition 
 		p.objects[newPosition] = []objectiface.Objecter{object}
 	}
 }
+
+// enforce that Plateau implements Environmenter
+var _ environmentiface.Environmenter = (*Plateau)(nil)
