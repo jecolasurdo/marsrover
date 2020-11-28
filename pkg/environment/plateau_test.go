@@ -147,6 +147,14 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 
 		err = p.PlaceObject(mockObjectB, sharedLocation)
 		assert.NoError(t, err)
+
+		foundA, objectAPosition := p.FindObject(mockObjectA)
+		assert.True(t, foundA)
+		assert.Equal(t, sharedLocation, objectAPosition.Position)
+
+		foundB, objectBPosition := p.FindObject(mockObjectB)
+		assert.True(t, foundB)
+		assert.Equal(t, sharedLocation, objectBPosition.Position)
 	})
 
 	t.Run("multiple objects can be placed at different locations", func(t *testing.T) {
@@ -254,8 +262,39 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		assert.Equal(t, newPosition, objectPosition.Position)
 	})
 
-	// Moving an object to a position where another object exists does not
-	//     disturb the other object
+	t.Run("an object can be moved to the same position as another object", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockObjectA := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectA.EXPECT().ID().Return("A").AnyTimes()
+
+		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
+		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
+
+		p := environment.NewPlateau(coordinate.NewPoint(10, 10))
+
+		positionA := coordinate.NewPoint(4, 5)
+		err := p.PlaceObject(mockObjectA, positionA)
+		assert.NoError(t, err)
+
+		positionB := coordinate.NewPoint(6, 7)
+		err = p.PlaceObject(mockObjectB, positionB)
+		assert.NoError(t, err)
+
+		// move object B to position A
+		err = p.RecordMovement(mockObjectB, positionA)
+
+		// object A should still be at position A
+		foundA, objectAPosition := p.FindObject(mockObjectA)
+		assert.True(t, foundA)
+		assert.Equal(t, positionA, objectAPosition.Position)
+
+		// objectB should be at position B
+		foundB, objectBPosition := p.FindObject(mockObjectB)
+		assert.True(t, foundB)
+		assert.Equal(t, positionA, objectBPosition.Position)
+	})
 }
 
 func Test_PlateauFindObject(t *testing.T) {
