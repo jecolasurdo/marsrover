@@ -5,3 +5,11 @@ type Point struct {
 	X int
 	Y int
 }
+
+// NewPoint instantiates a new point.
+func NewPoint(x, y int) Point {
+	return Point{
+		X: x,
+		Y: y,
+	}
+}
