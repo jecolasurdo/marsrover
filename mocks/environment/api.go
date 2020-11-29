@@ -6,9 +6,9 @@ package mock_environmentiface
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	coordinate "github.com/jecolasurdo/marsrover/pkg/coordinate"
 	environmenttypes "github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	objectiface "github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
+	spatial "github.com/jecolasurdo/marsrover/pkg/spatial"
 	reflect "reflect"
 )
 
@@ -36,10 +36,10 @@ func (m *MockEnvironmenter) EXPECT() *MockEnvironmenterMockRecorder {
 }
 
 // GetDimensions mocks base method
-func (m *MockEnvironmenter) GetDimensions() coordinate.Point {
+func (m *MockEnvironmenter) GetDimensions() spatial.Point {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetDimensions")
-	ret0, _ := ret[0].(coordinate.Point)
+	ret0, _ := ret[0].(spatial.Point)
 	return ret0
 }
 
@@ -50,7 +50,7 @@ func (mr *MockEnvironmenterMockRecorder) GetDimensions() *gomock.Call {
 }
 
 // PlaceObject mocks base method
-func (m *MockEnvironmenter) PlaceObject(arg0 objectiface.Objecter, arg1 coordinate.Point) error {
+func (m *MockEnvironmenter) PlaceObject(arg0 objectiface.Objecter, arg1 spatial.Point) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PlaceObject", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -64,7 +64,7 @@ func (mr *MockEnvironmenterMockRecorder) PlaceObject(arg0, arg1 interface{}) *go
 }
 
 // RecordMovement mocks base method
-func (m *MockEnvironmenter) RecordMovement(arg0 objectiface.Objecter, arg1 coordinate.Point) error {
+func (m *MockEnvironmenter) RecordMovement(arg0 objectiface.Objecter, arg1 spatial.Point) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RecordMovement", arg0, arg1)
 	ret0, _ := ret[0].(error)
@@ -78,10 +78,10 @@ func (mr *MockEnvironmenterMockRecorder) RecordMovement(arg0, arg1 interface{}) 
 }
 
 // ShowObjects mocks base method
-func (m *MockEnvironmenter) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
+func (m *MockEnvironmenter) ShowObjects() map[spatial.Point][]objectiface.Objecter {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ShowObjects")
-	ret0, _ := ret[0].(map[coordinate.Point][]objectiface.Objecter)
+	ret0, _ := ret[0].(map[spatial.Point][]objectiface.Objecter)
 	return ret0
 }
 

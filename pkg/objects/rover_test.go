@@ -6,9 +6,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	mock_environmentiface "github.com/jecolasurdo/marsrover/mocks/environment"
-	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/objects"
+	"github.com/jecolasurdo/marsrover/pkg/spatial"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +23,7 @@ func Test_LaunchRover(t *testing.T) {
 			Return(nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(objects.HeadingNorth, coordinate.NewPoint(1, 1), env)
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, err)
 		assert.NotNil(t, rover)
 	})
@@ -39,7 +39,7 @@ func Test_LaunchRover(t *testing.T) {
 			Return(fmt.Errorf(testError)).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(objects.HeadingNorth, coordinate.NewPoint(1, 1), env)
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, rover)
 		assert.EqualError(t, err, testError)
 	})
@@ -56,13 +56,13 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			Return(nil).
 			Times(1)
 
-		initialPosition := coordinate.NewPoint(1, 1)
+		initialPosition := spatial.NewPoint(1, 1)
 		env.EXPECT().
 			FindObject(gomock.Any()).
 			Return(true, &environmenttypes.ObjectPosition{Position: initialPosition}).
 			Times(1)
 
-		rover, err := objects.LaunchRover(objects.HeadingNorth, initialPosition, env)
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
 
 		currentPosition, err := rover.CurrentPosition()
@@ -80,13 +80,13 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			Return(nil).
 			Times(1)
 
-		initialPosition := coordinate.NewPoint(1, 1)
+		initialPosition := spatial.NewPoint(1, 1)
 		env.EXPECT().
 			FindObject(gomock.Any()).
 			Return(false, nil).
 			Times(1)
 
-		rover, err := objects.LaunchRover(objects.HeadingNorth, initialPosition, env)
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
 
 		currentPosition, err := rover.CurrentPosition()
@@ -105,12 +105,12 @@ func Test_RoverCurrentHeading(t *testing.T) {
 		Return(nil).
 		Times(1)
 
-	initialPosition := coordinate.NewPoint(1, 1)
-	rover, err := objects.LaunchRover(objects.HeadingNorth, initialPosition, env)
+	initialPosition := spatial.NewPoint(1, 1)
+	rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 	assert.Nil(t, err)
 
 	currentHeading := rover.CurrentHeading()
-	assert.Equal(t, objects.HeadingNorth, currentHeading)
+	assert.Equal(t, spatial.HeadingNorth, currentHeading)
 }
 
 func Test_RoverChangeHeading(t *testing.T) {
@@ -137,14 +137,14 @@ func Test_RoverChangeHeading(t *testing.T) {
 				Return(nil).
 				AnyTimes()
 
-			initialPosition := coordinate.NewPoint(1, 1)
-			initialHeading := objects.HeadingFromString(testCase.initialHeading)
+			initialPosition := spatial.NewPoint(1, 1)
+			initialHeading := spatial.HeadingFromString(testCase.initialHeading)
 			rover, err := objects.LaunchRover(initialHeading, initialPosition, env)
 			assert.Nil(t, err)
 
-			rover.ChangeHeading(objects.DirectionFromString(testCase.direction))
+			rover.ChangeHeading(spatial.DirectionFromString(testCase.direction))
 			newHeading := rover.CurrentHeading()
-			expectedHeading := objects.HeadingFromString(testCase.resultingHeading)
+			expectedHeading := spatial.HeadingFromString(testCase.resultingHeading)
 			assert.Equal(t, expectedHeading, newHeading)
 		})
 	}
@@ -153,29 +153,29 @@ func Test_RoverChangeHeading(t *testing.T) {
 func Test_RoverMove(t *testing.T) {
 	t.Run("move in each direction succeeds in proper calls to environment", func(t *testing.T) {
 		testCases := []struct {
-			initialHeading    objects.Heading
-			initialPosition   coordinate.Point
-			resultingPosition coordinate.Point
+			initialHeading    spatial.Heading
+			initialPosition   spatial.Point
+			resultingPosition spatial.Point
 		}{
 			{
-				objects.HeadingNorth,
-				coordinate.NewPoint(3, 7),
-				coordinate.NewPoint(3, 8),
+				spatial.HeadingNorth,
+				spatial.NewPoint(3, 7),
+				spatial.NewPoint(3, 8),
 			},
 			{
-				objects.HeadingEast,
-				coordinate.NewPoint(3, 7),
-				coordinate.NewPoint(4, 7),
+				spatial.HeadingEast,
+				spatial.NewPoint(3, 7),
+				spatial.NewPoint(4, 7),
 			},
 			{
-				objects.HeadingSouth,
-				coordinate.NewPoint(3, 7),
-				coordinate.NewPoint(3, 6),
+				spatial.HeadingSouth,
+				spatial.NewPoint(3, 7),
+				spatial.NewPoint(3, 6),
 			},
 			{
-				objects.HeadingWest,
-				coordinate.NewPoint(3, 7),
-				coordinate.NewPoint(2, 7),
+				spatial.HeadingWest,
+				spatial.NewPoint(3, 7),
+				spatial.NewPoint(2, 7),
 			},
 		}
 
@@ -213,7 +213,10 @@ func Test_RoverMove(t *testing.T) {
 		}
 	})
 
-	// move resulting in error when finding object reports the error and does not record movement
+	// TODO: Move heading and direction under the coordinate package and rename
+	// the coordinate package to something more general like "spatial"
+
+	// move resulting in error when finding object reports the error
 	// move resulting in error when recording movement reports the error
 	// moving into occupied space returns an error and does not call record movement
 }

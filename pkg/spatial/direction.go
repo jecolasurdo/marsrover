@@ -1,4 +1,4 @@
-package objects
+package spatial
 
 // Direction is a general direction (left or right)
 type Direction string

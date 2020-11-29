@@ -3,23 +3,23 @@ package environment
 import (
 	"fmt"
 
-	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
+	"github.com/jecolasurdo/marsrover/pkg/spatial"
 )
 
-type objectStore map[coordinate.Point][]objectiface.Objecter
+type objectStore map[spatial.Point][]objectiface.Objecter
 
 // Plateau is a rectangular martian environment.
 type Plateau struct {
-	dimensions coordinate.Point
+	dimensions spatial.Point
 	objects    objectStore
 }
 
 // NewPlateau instantiates a new Plateau and returns a reference to that
 // instance.
-func NewPlateau(dimensions coordinate.Point) *Plateau {
+func NewPlateau(dimensions spatial.Point) *Plateau {
 	return &Plateau{
 		dimensions: dimensions,
 		objects:    make(objectStore),
@@ -27,7 +27,7 @@ func NewPlateau(dimensions coordinate.Point) *Plateau {
 }
 
 // GetDimensions returns the dimension of the environment.
-func (p *Plateau) GetDimensions() coordinate.Point {
+func (p *Plateau) GetDimensions() spatial.Point {
 	return p.dimensions
 }
 
@@ -48,7 +48,7 @@ func (p *Plateau) GetDimensions() coordinate.Point {
 //
 // PlaceObject will return nil if the object has been successfully placed at the
 // specified position.
-func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.Point) error {
+func (p *Plateau) PlaceObject(object objectiface.Objecter, position spatial.Point) error {
 	if object == nil {
 		return fmt.Errorf("a nil object cannot be placed in the environment")
 	}
@@ -66,9 +66,9 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position coordinate.P
 	return nil
 }
 
-// RecordMovement records the movement an object from one position in the
+// RecordMovement records the movement of an object from one position in the
 // environment to another.
-func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordinate.Point) error {
+func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition spatial.Point) error {
 	if object == nil {
 		return fmt.Errorf("cannot record the movement of a nil object")
 	}
@@ -91,7 +91,7 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition coordi
 
 // ShowObjects returns a sparse map of points within the terrain that
 // contain objects.
-func (p *Plateau) ShowObjects() map[coordinate.Point][]objectiface.Objecter {
+func (p *Plateau) ShowObjects() map[spatial.Point][]objectiface.Objecter {
 	return p.objects
 }
 
@@ -112,7 +112,7 @@ func (p *Plateau) FindObject(objectToFind objectiface.Objecter) (bool, *environm
 	return false, nil
 }
 
-func (p *Plateau) verifyPositionIsLegal(position coordinate.Point) error {
+func (p *Plateau) verifyPositionIsLegal(position spatial.Point) error {
 	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
 		position.Y < 0 || position.X < 0 {
 		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
@@ -142,7 +142,7 @@ func (p *Plateau) removeObjectUnchecked(object objectiface.Objecter) {
 // This method places an object into the environment without checking the validity
 // of the specified coordinates, without checking if the object is nil, and
 // without checking if the object already exists elsewhere in the environment.
-func (p *Plateau) placeObjectUnchecked(object objectiface.Objecter, newPosition coordinate.Point) {
+func (p *Plateau) placeObjectUnchecked(object objectiface.Objecter, newPosition spatial.Point) {
 	if objectList, found := p.objects[newPosition]; found {
 		objectList = append(objectList, object)
 		p.objects[newPosition] = objectList

@@ -4,15 +4,15 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
+	"github.com/jecolasurdo/marsrover/pkg/spatial"
 )
 
 // A Rover is a vehicle that traverses an environment.
 type Rover struct {
 	id      string
 	env     environmentiface.Environmenter
-	heading Heading
+	heading spatial.Heading
 }
 
 // LaunchRover initializes a new rover, and attempts to place it within the
@@ -20,7 +20,7 @@ type Rover struct {
 // rules of the supplied environment. If the rover cannot be placed at the
 // supplied position (due to the environment's rules), an error will be
 // returned, and the rover will not initialize (it will be nil).
-func LaunchRover(heading Heading, position coordinate.Point, environment environmentiface.Environmenter) (*Rover, error) {
+func LaunchRover(heading spatial.Heading, position spatial.Point, environment environmentiface.Environmenter) (*Rover, error) {
 	rover := &Rover{
 		id:      uuid.New().String(),
 		env:     environment,
@@ -43,7 +43,7 @@ func (r *Rover) ID() string {
 // An error can also be returned if the rover has somehow become removed from
 // its environment (such a situation can occur depending on the rules of the
 // environment in which the rover is currently operating).
-func (r *Rover) CurrentPosition() (*coordinate.Point, error) {
+func (r *Rover) CurrentPosition() (*spatial.Point, error) {
 	found, objectPosition := r.env.FindObject(r)
 	if !found {
 		return nil, fmt.Errorf("this rover no longer exists within its environment")
@@ -52,47 +52,47 @@ func (r *Rover) CurrentPosition() (*coordinate.Point, error) {
 }
 
 // CurrentHeading returns the rover's current heading.
-func (r *Rover) CurrentHeading() Heading {
+func (r *Rover) CurrentHeading() spatial.Heading {
 	return r.heading
 }
 
 // ChangeHeading updates the rover's current heading according to a specified
 // direction (left of right).
-func (r *Rover) ChangeHeading(direction Direction) {
-	ordinals := []Heading{HeadingNorth, HeadingEast, HeadingSouth, HeadingWest}
-	if direction == DirectionRight {
-		if r.heading == HeadingWest {
-			r.heading = HeadingNorth
+func (r *Rover) ChangeHeading(direction spatial.Direction) {
+	if direction == spatial.DirectionRight {
+		if r.heading == spatial.HeadingWest {
+			r.heading = spatial.HeadingNorth
 		} else {
-			r.heading = ordinals[int(r.heading)+1]
+			r.heading = spatial.Cardinals[int(r.heading)+1]
 		}
 	} else {
-		if r.heading == HeadingNorth {
-			r.heading = HeadingWest
+		if r.heading == spatial.HeadingNorth {
+			r.heading = spatial.HeadingWest
 		} else {
-			r.heading = ordinals[int(r.heading)-1]
+			r.heading = spatial.Cardinals[int(r.heading)-1]
 		}
 	}
 }
 
 // Move attempts to move the rover forward one unit in its current heading.
-//
 // If the move succeeds, the rover has successfully changed positions, and this
 // method will return nil.
 //
-// However, the move can fail in a few situations.
-// - If the movement in the current heading would violate the rules of the
-//   current environment. (typically this means going out of bounds, but the
-//   behavior can change depending on the rules of a particular environment.
-// - If the next position would result in moving to a space already occupied
+// However, the move can fail in the following scenarios:
+//
+//   1. The movement in the current heading would violate the rules of the
+//   current environment (typically this means going out of bounds, but the
+//   behavior can change depending on the rules of a particular environment).
+//
+//   2. The next position would result in moving to a space already occupied
 //   by another object in the environment.
 //
 // If a move fails, an error will be returned. In the case of a failed move
 // it is recommended to check the CurrentPosition method to verify the position
-// of the rover. If the rover itself decided a move was illegal (for instance
+// of the rover. If the rover itself decided a move was illegal (for instance,
 // if another object was present at a destination), then the rover's position
-// should be unchanged. However, if the rover attempted a maneuver that is
-// prohibed its environment, then it is possible that the rover's position has
+// might be unchanged. However, if the rover attempted a maneuver that is
+// prohibed by its environment, then it is possible that the rover's position has
 // changed within the environment (according to the particular environment's
 // rules).
 func (r *Rover) Move() error {
@@ -103,13 +103,13 @@ func (r *Rover) Move() error {
 
 	newPosition := objectPosition.Position
 	switch r.heading {
-	case HeadingNorth:
+	case spatial.HeadingNorth:
 		newPosition.Y++
-	case HeadingEast:
+	case spatial.HeadingEast:
 		newPosition.X++
-	case HeadingSouth:
+	case spatial.HeadingSouth:
 		newPosition.Y--
-	case HeadingWest:
+	case spatial.HeadingWest:
 		newPosition.X--
 	}
 

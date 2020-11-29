@@ -1,4 +1,4 @@
-package objects
+package spatial
 
 // Heading represents the direction that an object may be pointing.
 type Heading int
@@ -27,3 +27,9 @@ func HeadingFromString(h string) Heading {
 		panic("unknown heading")
 	}
 }
+
+// Cardinals is an array of cardinal directions (Headings).
+//
+// Note: It is important that the indices of the values in this array match the
+// respective value for the Heading constants.
+var Cardinals = [4]Heading{HeadingNorth, HeadingEast, HeadingSouth, HeadingWest}

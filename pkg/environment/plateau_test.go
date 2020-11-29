@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	mock_objectiface "github.com/jecolasurdo/marsrover/mocks/objects"
-	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment"
 	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
+	"github.com/jecolasurdo/marsrover/pkg/spatial"
 )
 
 func Test_PlateauGetDimensions(t *testing.T) {
-	expectedDimensions := coordinate.Point{
+	expectedDimensions := spatial.Point{
 		X: 5,
 		Y: 9,
 	}
@@ -26,10 +26,10 @@ func Test_PlateauGetDimensions(t *testing.T) {
 
 func Test_PlateauShowObjects(t *testing.T) {
 	t.Run("returns empty map if no objects present", func(t *testing.T) {
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 
 		actResult := p.ShowObjects()
-		expResult := make(map[coordinate.Point][]objectiface.Objecter)
+		expResult := make(map[spatial.Point][]objectiface.Objecter)
 
 		assert.Equal(t, expResult, actResult)
 	})
@@ -44,12 +44,12 @@ func Test_PlateauShowObjects(t *testing.T) {
 		mockObject2 := mock_objectiface.NewMockObjecter(ctrl)
 		mockObject2.EXPECT().ID().Return("2").AnyTimes()
 
-		mockObjects := map[coordinate.Point][]objectiface.Objecter{
+		mockObjects := map[spatial.Point][]objectiface.Objecter{
 			{X: 1, Y: 2}: {mockObject1},
 			{X: 2, Y: 3}: {mockObject2},
 		}
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		for position, objects := range mockObjects {
 			for _, object := range objects {
 				err := p.PlaceObject(object, position)
@@ -67,8 +67,8 @@ func Test_PlateauShowObjects(t *testing.T) {
 
 func Test_PlateauPlaceObjects(t *testing.T) {
 	t.Run("nil object returns an error", func(t *testing.T) {
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		err := p.PlaceObject(nil, coordinate.Point{X: 1, Y: 1})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		err := p.PlaceObject(nil, spatial.Point{X: 1, Y: 1})
 		assert.EqualError(t, err, "a nil object cannot be placed in the environment")
 	})
 
@@ -106,8 +106,8 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 				defer ctrl.Finish()
 				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 
-				p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-				err := p.PlaceObject(mockObject, coordinate.Point{X: testCase.X, Y: testCase.Y})
+				p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+				err := p.PlaceObject(mockObject, spatial.Point{X: testCase.X, Y: testCase.Y})
 				assert.EqualError(t, err, "an object cannot be placed outside the bounds of the environment")
 			})
 		}
@@ -120,11 +120,11 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		mockObject := mock_objectiface.NewMockObjecter(ctrl)
 		mockObject.EXPECT().ID().Return("A").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		err := p.PlaceObject(mockObject, coordinate.Point{X: 1, Y: 1})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		err := p.PlaceObject(mockObject, spatial.Point{X: 1, Y: 1})
 		assert.NoError(t, err)
 
-		err = p.PlaceObject(mockObject, coordinate.Point{X: 1, Y: 1})
+		err = p.PlaceObject(mockObject, spatial.Point{X: 1, Y: 1})
 		assert.EqualError(t, err, "object with ID 'A' already exists within the environment")
 	})
 
@@ -138,9 +138,9 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
 		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
 
-		sharedLocation := coordinate.Point{X: 1, Y: 1}
+		sharedLocation := spatial.Point{X: 1, Y: 1}
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 
 		err := p.PlaceObject(mockObjectA, sharedLocation)
 		assert.NoError(t, err)
@@ -167,13 +167,13 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
 		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 
-		locationOne := coordinate.Point{X: 1, Y: 1}
+		locationOne := spatial.Point{X: 1, Y: 1}
 		err := p.PlaceObject(mockObjectA, locationOne)
 		assert.NoError(t, err)
 
-		locationTwo := coordinate.Point{X: 2, Y: 2}
+		locationTwo := spatial.Point{X: 2, Y: 2}
 		err = p.PlaceObject(mockObjectB, locationTwo)
 		assert.NoError(t, err)
 
@@ -189,8 +189,8 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 
 func Test_PlateauRecordMovement(t *testing.T) {
 	t.Run("cannot record the movement of a nil object", func(t *testing.T) {
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		err := p.RecordMovement(nil, coordinate.Point{X: 3, Y: 3})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		err := p.RecordMovement(nil, spatial.Point{X: 3, Y: 3})
 		assert.Error(t, err, "cannot record the movement of a nil object")
 	})
 
@@ -228,11 +228,11 @@ func Test_PlateauRecordMovement(t *testing.T) {
 				defer ctrl.Finish()
 				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 
-				p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-				err := p.PlaceObject(mockObject, coordinate.Point{X: 5, Y: 5})
+				p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+				err := p.PlaceObject(mockObject, spatial.Point{X: 5, Y: 5})
 				assert.NoError(t, err)
 
-				err = p.RecordMovement(mockObject, coordinate.Point{X: testCase.X, Y: testCase.Y})
+				err = p.RecordMovement(mockObject, spatial.Point{X: testCase.X, Y: testCase.Y})
 				assert.EqualError(t, err, "an object cannot be placed outside the bounds of the environment")
 			})
 		}
@@ -244,8 +244,8 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		mockObject := mock_objectiface.NewMockObjecter(ctrl)
 		mockObject.EXPECT().ID().Return("A").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		err := p.RecordMovement(mockObject, coordinate.Point{X: 5, Y: 5})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		err := p.RecordMovement(mockObject, spatial.Point{X: 5, Y: 5})
 
 		assert.EqualError(t, err, "cannot move an object that has not been placed in the environment")
 	})
@@ -257,12 +257,12 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		mockObject := mock_objectiface.NewMockObjecter(ctrl)
 		mockObject.EXPECT().ID().Return("A").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		initialPosition := coordinate.Point{X: 4, Y: 5}
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		initialPosition := spatial.Point{X: 4, Y: 5}
 		err := p.PlaceObject(mockObject, initialPosition)
 		assert.NoError(t, err)
 
-		newPosition := coordinate.Point{X: 6, Y: 7}
+		newPosition := spatial.Point{X: 6, Y: 7}
 		err = p.RecordMovement(mockObject, newPosition)
 
 		found, objectPosition := p.FindObject(mockObject)
@@ -280,13 +280,13 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		mockObjectB := mock_objectiface.NewMockObjecter(ctrl)
 		mockObjectB.EXPECT().ID().Return("B").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.NewPoint(10, 10))
+		p := environment.NewPlateau(spatial.NewPoint(10, 10))
 
-		positionA := coordinate.NewPoint(4, 5)
+		positionA := spatial.NewPoint(4, 5)
 		err := p.PlaceObject(mockObjectA, positionA)
 		assert.NoError(t, err)
 
-		positionB := coordinate.NewPoint(6, 7)
+		positionB := spatial.NewPoint(6, 7)
 		err = p.PlaceObject(mockObjectB, positionB)
 		assert.NoError(t, err)
 
@@ -307,7 +307,7 @@ func Test_PlateauRecordMovement(t *testing.T) {
 
 func Test_PlateauFindObject(t *testing.T) {
 	t.Run("finding a nil object returns false, nil", func(t *testing.T) {
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		found, objectPosition := p.FindObject(nil)
 		assert.False(t, found)
 		assert.Nil(t, objectPosition)
@@ -319,7 +319,7 @@ func Test_PlateauFindObject(t *testing.T) {
 		mockObject := mock_objectiface.NewMockObjecter(ctrl)
 		mockObject.EXPECT().ID().Return("A").AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		found, object := p.FindObject(mockObject)
 
 		assert.False(t, found)
@@ -333,8 +333,8 @@ func Test_PlateauFindObject(t *testing.T) {
 		objectID := "A"
 		mockObject.EXPECT().ID().Return(objectID).AnyTimes()
 
-		p := environment.NewPlateau(coordinate.Point{X: 10, Y: 10})
-		position := coordinate.Point{X: 4, Y: 5}
+		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
+		position := spatial.Point{X: 4, Y: 5}
 		err := p.PlaceObject(mockObject, position)
 		assert.NoError(t, err)
 
