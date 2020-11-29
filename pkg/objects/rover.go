@@ -86,8 +86,15 @@ func (r *Rover) ChangeHeading(direction Direction) {
 //   behavior can change depending on the rules of a particular environment.
 // - If the next position would result in moving to a space already occupied
 //   by another object in the environment.
-// If the move fails, an error will be returned, and the rover will retain its
-// previous heading and position.
+//
+// If a move fails, an error will be returned. In the case of a failed move
+// it is recommended to check the CurrentPosition method to verify the position
+// of the rover. If the rover itself decided a move was illegal (for instance
+// if another object was present at a destination), then the rover's position
+// should be unchanged. However, if the rover attempted a maneuver that is
+// prohibed its environment, then it is possible that the rover's position has
+// changed within the environment (according to the particular environment's
+// rules).
 func (r *Rover) Move() error {
 	panic("not implemented")
 }

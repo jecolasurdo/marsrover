@@ -149,3 +149,69 @@ func Test_RoverChangeHeading(t *testing.T) {
 		})
 	}
 }
+
+func Test_RoverMove(t *testing.T) {
+	t.Run("move in each direction succeeds in proper calls to environment", func(t *testing.T) {
+		testCases := []struct {
+			initialHeading    objects.Heading
+			initialPosition   coordinate.Point
+			resultingPosition coordinate.Point
+		}{
+			{
+				objects.HeadingNorth,
+				coordinate.NewPoint(3, 7),
+				coordinate.NewPoint(3, 8),
+			},
+			{
+				objects.HeadingEast,
+				coordinate.NewPoint(3, 7),
+				coordinate.NewPoint(4, 7),
+			},
+			{
+				objects.HeadingSouth,
+				coordinate.NewPoint(3, 7),
+				coordinate.NewPoint(3, 6),
+			},
+			{
+				objects.HeadingWest,
+				coordinate.NewPoint(3, 7),
+				coordinate.NewPoint(2, 7),
+			},
+		}
+
+		for i, testCase := range testCases {
+			testName := fmt.Sprintf("test case %v", i)
+			t.Run(testName, func(t *testing.T) {
+				ctrl := gomock.NewController(t)
+				defer ctrl.Finish()
+
+				env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+				env.EXPECT().
+					PlaceObject(gomock.Any(), gomock.Any()).
+					Return(nil).
+					Times(1)
+
+				rover, err := objects.LaunchRover(testCase.initialHeading, testCase.initialPosition, env)
+				assert.Nil(t, err)
+
+				env.EXPECT().
+					FindObject(rover).
+					Return(true, &environmenttypes.ObjectPosition{
+						Object:   rover,
+						Position: testCase.initialPosition,
+					}).
+					Times(1)
+
+				env.EXPECT().
+					RecordMovement(rover, testCase.resultingPosition).
+					Return(nil).
+					Times(1)
+
+				err = rover.Move()
+				assert.Nil(t, err)
+			})
+		}
+	})
+
+	// move resulting in error reports the error
+}
