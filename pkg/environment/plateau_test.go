@@ -347,3 +347,13 @@ func Test_PlateauFindObject(t *testing.T) {
 		assert.Equal(t, position, objectPosition.Position)
 	})
 }
+
+func Test_PlateauInspectPosition(t *testing.T) {
+	t.Run("no objects at position", func(t *testing.T) {
+		p := environment.NewPlateau(spatial.NewPoint(10, 10))
+		found, objects, err := p.InspectPosition(spatial.NewPoint(5, 5))
+		assert.False(t, found)
+		assert.Nil(t, objects)
+		assert.NoError(t, err)
+	})
+}
