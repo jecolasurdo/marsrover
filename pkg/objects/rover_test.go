@@ -213,7 +213,33 @@ func Test_RoverMove(t *testing.T) {
 		}
 	})
 
-	// move resulting in error when finding object reports the error
+	t.Run("move reports error if the object no longer exists in the environment", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+		env.EXPECT().
+			PlaceObject(gomock.Any(), gomock.Any()).
+			Return(nil).
+			Times(1)
+
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(5, 5), env)
+		assert.Nil(t, err)
+
+		env.EXPECT().
+			FindObject(rover).
+			Return(false, nil).
+			Times(1)
+
+		env.EXPECT().
+			RecordMovement(gomock.Any(), gomock.Any()).
+			Return(nil).
+			Times(0)
+
+		err = rover.Move()
+		assert.EqualError(t, err, "this rover no longer exists within its environment")
+	})
+
 	// move resulting in error when recording movement reports the error
 	// moving into occupied space returns an error and does not call record movement
 }
