@@ -213,5 +213,7 @@ func Test_RoverMove(t *testing.T) {
 		}
 	})
 
-	// move resulting in error reports the error
+	// move resulting in error when finding object reports the error and does not record movement
+	// move resulting in error when recording movement reports the error
+	// moving into occupied space returns an error and does not call record movement
 }

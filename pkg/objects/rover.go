@@ -78,7 +78,7 @@ func (r *Rover) ChangeHeading(direction Direction) {
 // Move attempts to move the rover forward one unit in its current heading.
 //
 // If the move succeeds, the rover has successfully changed positions, and this
-// method will return nil
+// method will return nil.
 //
 // However, the move can fail in a few situations.
 // - If the movement in the current heading would violate the rules of the
@@ -96,5 +96,22 @@ func (r *Rover) ChangeHeading(direction Direction) {
 // changed within the environment (according to the particular environment's
 // rules).
 func (r *Rover) Move() error {
-	panic("not implemented")
+	found, objectPosition := r.env.FindObject(r)
+	if !found {
+		return fmt.Errorf("this rover no longer exists within its environment")
+	}
+
+	newPosition := objectPosition.Position
+	switch r.heading {
+	case HeadingNorth:
+		newPosition.Y++
+	case HeadingEast:
+		newPosition.X++
+	case HeadingSouth:
+		newPosition.Y--
+	case HeadingWest:
+		newPosition.X--
+	}
+
+	return r.env.RecordMovement(r, newPosition)
 }
