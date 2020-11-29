@@ -349,11 +349,20 @@ func Test_PlateauFindObject(t *testing.T) {
 }
 
 func Test_PlateauInspectPosition(t *testing.T) {
-	t.Run("no objects at position", func(t *testing.T) {
+	t.Run("no objects at position succeeds", func(t *testing.T) {
 		p := environment.NewPlateau(spatial.NewPoint(10, 10))
 		found, objects, err := p.InspectPosition(spatial.NewPoint(5, 5))
 		assert.False(t, found)
 		assert.Nil(t, objects)
 		assert.NoError(t, err)
+	})
+
+	t.Run("illegal position returns error", func(t *testing.T) {
+		p := environment.NewPlateau(spatial.NewPoint(10, 10))
+		illegalPosition := spatial.NewPoint(20, 20)
+		found, objects, err := p.InspectPosition(illegalPosition)
+		assert.False(t, found)
+		assert.Nil(t, objects)
+		assert.EqualError(t, err, "the supplied position is outside the bounds of the environment")
 	})
 }

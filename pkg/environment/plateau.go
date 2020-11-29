@@ -124,6 +124,11 @@ func (p *Plateau) FindObject(objectToFind objectiface.Objecter) (bool, *environm
 // If the requested position does not exist within the plateau, this method will
 // return false, nil, and an error.
 func (p *Plateau) InspectPosition(positionToInspect spatial.Point) (bool, []objectiface.Objecter, error) {
+	err := p.verifyPositionIsLegal(positionToInspect)
+	if err != nil {
+		return false, nil, err
+	}
+
 	for knownPosition, objects := range p.objects {
 		if knownPosition == positionToInspect {
 			if objects != nil && len(objects) > 0 {
@@ -138,7 +143,7 @@ func (p *Plateau) InspectPosition(positionToInspect spatial.Point) (bool, []obje
 func (p *Plateau) verifyPositionIsLegal(position spatial.Point) error {
 	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
 		position.Y < 0 || position.X < 0 {
-		return fmt.Errorf("an object cannot be placed outside the bounds of the environment")
+		return fmt.Errorf("the supplied position is outside the bounds of the environment")
 	}
 	return nil
 }
