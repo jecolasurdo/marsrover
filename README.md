@@ -1,6 +1,8 @@
 Mars Rover
 ==========
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/jecolasurdo/marsrover)](https://goreportcard.com/report/github.com/jecolasurdo/marsrover)
+
 Specifications
 ==============
 
