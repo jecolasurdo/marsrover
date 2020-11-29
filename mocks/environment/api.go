@@ -105,3 +105,19 @@ func (mr *MockEnvironmenterMockRecorder) FindObject(arg0 interface{}) *gomock.Ca
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindObject", reflect.TypeOf((*MockEnvironmenter)(nil).FindObject), arg0)
 }
+
+// InspectPosition mocks base method
+func (m *MockEnvironmenter) InspectPosition(arg0 spatial.Point) (bool, []objectiface.Objecter, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InspectPosition", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].([]objectiface.Objecter)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// InspectPosition indicates an expected call of InspectPosition
+func (mr *MockEnvironmenterMockRecorder) InspectPosition(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InspectPosition", reflect.TypeOf((*MockEnvironmenter)(nil).InspectPosition), arg0)
+}

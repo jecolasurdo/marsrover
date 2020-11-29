@@ -28,4 +28,17 @@ type Environmenter interface {
 	// and if the object is found, returns true and the object and its position.
 	// If the object is not found in the environment, FindObject returns false.
 	FindObject(objectiface.Objecter) (bool, *environmenttypes.ObjectPosition)
+
+	// InspectPosition attempts to return any objects that may be present at
+	// a specified position.
+	//
+	// If there are no objects present at the specified position, this method
+	// must return false, either an empty or nil slice, and a nil error.
+	//
+	// If there are objects present at the specified position, this method must
+	// return true, a non-empty list of objects, and a nil error.
+	//
+	// If the requested position does not exist within the defined environment,
+	// the method must return false, nil, and an error.
+	InspectPosition(spatial.Point) (bool, []objectiface.Objecter, error)
 }

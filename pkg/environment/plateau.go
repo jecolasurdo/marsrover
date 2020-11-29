@@ -112,6 +112,21 @@ func (p *Plateau) FindObject(objectToFind objectiface.Objecter) (bool, *environm
 	return false, nil
 }
 
+// InspectPosition attempts to return any objects that may be present at
+// a specified position.
+//
+// If there are no objects present at the specified position, this method
+// will return false, either an empty or nil slice, and a nil error.
+//
+// If there are objects present at the specified position, this method will
+// return true, a non-empty list of objects, and a nil error.
+//
+// If the requested position does not exist within the plateau, this method will
+// return false, nil, and an error.
+func (p *Plateau) InspectPosition(position spatial.Point) (bool, []objectiface.Objecter, error) {
+	panic("not implemented")
+}
+
 func (p *Plateau) verifyPositionIsLegal(position spatial.Point) error {
 	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
 		position.Y < 0 || position.X < 0 {

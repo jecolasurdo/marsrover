@@ -43,6 +43,10 @@ func Test_LaunchRover(t *testing.T) {
 		assert.Nil(t, rover)
 		assert.EqualError(t, err, testError)
 	})
+
+	t.Run("launching into a position already occupied by another rover returns nil, error", func(t *testing.T) {
+		t.Fatal("not implemented")
+	})
 }
 
 func Test_RoverCurrentPosition(t *testing.T) {
@@ -272,5 +276,24 @@ func Test_RoverMove(t *testing.T) {
 			err = rover.Move()
 			assert.EqualError(t, err, testError.Error())
 		})
-	// moving into occupied space returns an error and does not call record movement
+
+	t.Run("moving into occupied space returns an error and does not call record movement",
+		func(t *testing.T) {
+			t.Fatal("not implemented")
+			// ctrl := gomock.NewController(t)
+			// defer ctrl.Finish()
+
+			// env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+			// env.EXPECT().
+			// 	PlaceObject(gomock.Any(), gomock.Any()).
+			// 	Return(nil).
+			// 	Times(2)
+
+			// roverBPosition := spatial.NewPoint(4, 5)
+			// roverB, err := objects.LaunchRover(spatial.HeadingEast, roverBPosition, env)
+			// assert.Nil(t, err)
+
+			// err = roverB.Move()
+			// assert.EqualError(t, err, "unable to move, another object detectected at destination position")
+		})
 }
