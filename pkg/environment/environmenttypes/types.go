@@ -1,4 +1,5 @@
-// Package environmenttypes provides public types associated with environment behavior.
+// Package environmenttypes provides public types associated with environment
+// behavior.
 package environmenttypes
 
 import (

@@ -11,7 +11,7 @@ import (
 
 type objectStore map[spatial.Point][]objectiface.Objecter
 
-// Plateau is a rectangular martian environment.
+// Plateau is a curiously rectangular martian environment.
 type Plateau struct {
 	dimensions spatial.Point
 	objects    objectStore

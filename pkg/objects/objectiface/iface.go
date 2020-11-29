@@ -1,4 +1,5 @@
-// Package objectiface provides the basic contract that any object must satisfy to exist within an environment.
+// Package objectiface provides the basic contract that any object must satisfy
+// to exist within an environment.
 package objectiface
 
 // An Objecter is anything that knows how to be an object.

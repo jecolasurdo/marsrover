@@ -213,9 +213,6 @@ func Test_RoverMove(t *testing.T) {
 		}
 	})
 
-	// TODO: Move heading and direction under the coordinate package and rename
-	// the coordinate package to something more general like "spatial"
-
 	// move resulting in error when finding object reports the error
 	// move resulting in error when recording movement reports the error
 	// moving into occupied space returns an error and does not call record movement
