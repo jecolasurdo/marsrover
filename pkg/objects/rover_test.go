@@ -112,3 +112,40 @@ func Test_RoverCurrentHeading(t *testing.T) {
 	currentHeading := rover.CurrentHeading()
 	assert.Equal(t, objects.HeadingNorth, currentHeading)
 }
+
+func Test_RoverChangeHeading(t *testing.T) {
+	testCases := []struct{ initialHeading, direction, resultingHeading string }{
+		{"N", "R", "E"},
+		{"E", "R", "S"},
+		{"S", "R", "W"},
+		{"W", "R", "N"},
+		{"N", "L", "W"},
+		{"W", "L", "S"},
+		{"S", "L", "E"},
+		{"E", "L", "N"},
+	}
+
+	for _, testCase := range testCases {
+		testName := testCase.initialHeading + testCase.direction + testCase.resultingHeading
+		t.Run(testName, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+			env.EXPECT().
+				PlaceObject(gomock.Any(), gomock.Any()).
+				Return(nil).
+				AnyTimes()
+
+			initialPosition := coordinate.NewPoint(1, 1)
+			initialHeading := objects.HeadingFromString(testCase.initialHeading)
+			rover, err := objects.LaunchRover(initialHeading, initialPosition, env)
+			assert.Nil(t, err)
+
+			rover.ChangeHeading(objects.DirectionFromString(testCase.direction))
+			newHeading := rover.CurrentHeading()
+			expectedHeading := objects.HeadingFromString(testCase.resultingHeading)
+			assert.Equal(t, expectedHeading, newHeading)
+		})
+	}
+}

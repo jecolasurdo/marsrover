@@ -59,7 +59,20 @@ func (r *Rover) CurrentHeading() Heading {
 // ChangeHeading updates the rover's current heading according to a specified
 // direction (left of right).
 func (r *Rover) ChangeHeading(direction Direction) {
-	panic("not implemented")
+	ordinals := []Heading{HeadingNorth, HeadingEast, HeadingSouth, HeadingWest}
+	if direction == DirectionRight {
+		if r.heading == HeadingWest {
+			r.heading = HeadingNorth
+		} else {
+			r.heading = ordinals[int(r.heading)+1]
+		}
+	} else {
+		if r.heading == HeadingNorth {
+			r.heading = HeadingWest
+		} else {
+			r.heading = ordinals[int(r.heading)-1]
+		}
+	}
 }
 
 // Move attempts to move the rover forward one unit in its current heading.
