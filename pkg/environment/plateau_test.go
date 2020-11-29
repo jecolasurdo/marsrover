@@ -264,6 +264,7 @@ func Test_PlateauRecordMovement(t *testing.T) {
 
 		newPosition := spatial.Point{X: 6, Y: 7}
 		err = p.RecordMovement(mockObject, newPosition)
+		assert.NoError(t, err)
 
 		found, objectPosition := p.FindObject(mockObject)
 		assert.True(t, found)
@@ -292,13 +293,14 @@ func Test_PlateauRecordMovement(t *testing.T) {
 
 		// move object B to position A
 		err = p.RecordMovement(mockObjectB, positionA)
+		assert.NoError(t, err)
 
 		// object A should still be at position A
 		foundA, objectAPosition := p.FindObject(mockObjectA)
 		assert.True(t, foundA)
 		assert.Equal(t, positionA, objectAPosition.Position)
 
-		// objectB should be at position B
+		// objectB should be at position A
 		foundB, objectBPosition := p.FindObject(mockObjectB)
 		assert.True(t, foundB)
 		assert.Equal(t, positionA, objectBPosition.Position)
