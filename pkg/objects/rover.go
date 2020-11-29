@@ -1,6 +1,8 @@
 package objects
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
@@ -38,13 +40,20 @@ func (r *Rover) ID() string {
 }
 
 // CurrentPosition returns the rover's current position within its environment.
-func (r *Rover) CurrentPosition() coordinate.Point {
-	panic("not implemented")
+// An error can also be returned if the rover has somehow become removed from
+// its environment (such a situation can occur depending on the rules of the
+// environment in which the rover is currently operating).
+func (r *Rover) CurrentPosition() (*coordinate.Point, error) {
+	found, objectPosition := r.env.FindObject(r)
+	if !found {
+		return nil, fmt.Errorf("this rover no longer exists within its environment")
+	}
+	return &objectPosition.Position, nil
 }
 
 // CurrentHeading returns the rover's current heading.
 func (r *Rover) CurrentHeading() Heading {
-	panic("not implemented")
+	return r.heading
 }
 
 // ChangeHeading updates the rover's current heading according to a specified
