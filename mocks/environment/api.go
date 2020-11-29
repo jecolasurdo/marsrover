@@ -7,7 +7,8 @@ package mock_environmentiface
 import (
 	gomock "github.com/golang/mock/gomock"
 	coordinate "github.com/jecolasurdo/marsrover/pkg/coordinate"
-	objectiface "github.com/jecolasurdo/marsrover/pkg/object/objectiface"
+	environmenttypes "github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
+	objectiface "github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
 	reflect "reflect"
 )
 
@@ -62,18 +63,18 @@ func (mr *MockEnvironmenterMockRecorder) PlaceObject(arg0, arg1 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PlaceObject", reflect.TypeOf((*MockEnvironmenter)(nil).PlaceObject), arg0, arg1)
 }
 
-// MoveObject mocks base method
-func (m *MockEnvironmenter) MoveObject(arg0 objectiface.Objecter, arg1 coordinate.Point) error {
+// RecordMovement mocks base method
+func (m *MockEnvironmenter) RecordMovement(arg0 objectiface.Objecter, arg1 coordinate.Point) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MoveObject", arg0, arg1)
+	ret := m.ctrl.Call(m, "RecordMovement", arg0, arg1)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// MoveObject indicates an expected call of MoveObject
-func (mr *MockEnvironmenterMockRecorder) MoveObject(arg0, arg1 interface{}) *gomock.Call {
+// RecordMovement indicates an expected call of RecordMovement
+func (mr *MockEnvironmenterMockRecorder) RecordMovement(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MoveObject", reflect.TypeOf((*MockEnvironmenter)(nil).MoveObject), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecordMovement", reflect.TypeOf((*MockEnvironmenter)(nil).RecordMovement), arg0, arg1)
 }
 
 // ShowObjects mocks base method
@@ -88,4 +89,19 @@ func (m *MockEnvironmenter) ShowObjects() map[coordinate.Point][]objectiface.Obj
 func (mr *MockEnvironmenterMockRecorder) ShowObjects() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowObjects", reflect.TypeOf((*MockEnvironmenter)(nil).ShowObjects))
+}
+
+// FindObject mocks base method
+func (m *MockEnvironmenter) FindObject(arg0 objectiface.Objecter) (bool, *environmenttypes.ObjectPosition) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindObject", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*environmenttypes.ObjectPosition)
+	return ret0, ret1
+}
+
+// FindObject indicates an expected call of FindObject
+func (mr *MockEnvironmenterMockRecorder) FindObject(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindObject", reflect.TypeOf((*MockEnvironmenter)(nil).FindObject), arg0)
 }

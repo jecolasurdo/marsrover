@@ -6,10 +6,10 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	mock_objectiface "github.com/jecolasurdo/marsrover/mocks/object"
+	mock_objectiface "github.com/jecolasurdo/marsrover/mocks/objects"
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment"
-	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
+	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
 )
 
 func Test_PlateauGetDimensions(t *testing.T) {

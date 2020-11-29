@@ -3,7 +3,7 @@ package environmentiface
 import (
 	"github.com/jecolasurdo/marsrover/pkg/coordinate"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
-	"github.com/jecolasurdo/marsrover/pkg/object/objectiface"
+	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
 )
 
 // Environmenter is anything that can describe an environment.
