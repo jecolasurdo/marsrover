@@ -19,7 +19,11 @@ type Mission struct {
 }
 
 // NewMission constructs a new mission.
+// This function will panic if envBuilder or roverBuilder is nil.
 func NewMission(envBuilder environmentiface.EnvironmentBuilder, roverBuilder roveriface.RoverBuilder) *Mission {
+	if envBuilder == nil || roverBuilder == nil {
+		panic("builders are required")
+	}
 	return &Mission{
 		envBuilder,
 		roverBuilder,
@@ -187,6 +191,8 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 // If the method fails when navigating the rover, then only an error is
 // returned.
 func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (string, []string, error) {
+	var currentPosition *spatial.Point
+
 	if len(commands) > 0 {
 		for _, navigationCommand := range commands {
 			if navigationCommand == "M" {
@@ -205,7 +211,8 @@ func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (s
 			rover.ChangeHeading(direction)
 		}
 
-		currentPosition, err := rover.CurrentPosition()
+		var err error
+		currentPosition, err = rover.CurrentPosition()
 		if err != nil {
 			return "", nil, err
 		}

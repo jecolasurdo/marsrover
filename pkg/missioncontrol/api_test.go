@@ -1,10 +1,43 @@
 package missioncontrol_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/golang/mock/gomock"
+	mock_environmentiface "github.com/jecolasurdo/marsrover/mocks/environment"
+	mock_roveriface "github.com/jecolasurdo/marsrover/mocks/rover"
+	"github.com/jecolasurdo/marsrover/pkg/missioncontrol"
+	"github.com/stretchr/testify/assert"
+)
 
 func Test_NewMission(t *testing.T) {
-	t.Skip()
-	// returns a mission
+	t.Run("panic if envBuilder nil", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		assert.Panics(t, func() {
+			missioncontrol.NewMission(nil, mock_roveriface.NewMockRoverBuilder(ctrl))
+		})
+	})
+
+	t.Run("panic if roverBuilder nil", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		assert.Panics(t, func() {
+			missioncontrol.NewMission(mock_environmentiface.NewMockEnvironmentBuilder(ctrl), nil)
+		})
+	})
+
+	t.Run("happy path returns mission", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+		mission := missioncontrol.NewMission(
+			mock_environmentiface.NewMockEnvironmentBuilder(ctrl),
+			mock_roveriface.NewMockRoverBuilder(ctrl),
+		)
+		assert.NotNil(t, mission)
+	})
 }
 
 func Test_ExecutionMission(t *testing.T) {
