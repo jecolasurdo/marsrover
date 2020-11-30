@@ -14,10 +14,16 @@ type Rover struct {
 }
 
 // LaunchRover initializes a new rover, and attempts to place it within the
-// environment. The placement within the environment is subject to the spatial
+// environment.
+//
+// The placement within the environment is subject to the spatial
 // rules of the supplied environment. If the rover cannot be placed at the
 // supplied position (due to the environment's rules), an error will be
 // returned, and the rover will not initialize (it will be nil).
+//
+// A rover cannot be launched in a position that is occupied by another object
+// within the environment. In this caes, the rover will not be initialized, and
+// an error will be returned.
 func LaunchRover(heading spatial.Heading, position spatial.Point, env environmentiface.Environmenter) (*Rover, error) {
 	occupied, _, err := env.InspectPosition(position)
 	if err != nil {
@@ -118,6 +124,15 @@ func (r *Rover) Move() error {
 		newPosition.Y--
 	case spatial.HeadingWest:
 		newPosition.X--
+	}
+
+	occupied, _, err := r.env.InspectPosition(newPosition)
+	if err != nil {
+		return err
+	}
+
+	if occupied {
+		return ErrRoverIncompatibleObjectDetected(newPosition)
 	}
 
 	return r.env.RecordMovement(r, newPosition)

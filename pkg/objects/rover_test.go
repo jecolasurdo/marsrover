@@ -8,6 +8,7 @@ import (
 	mock_environmentiface "github.com/jecolasurdo/marsrover/mocks/environment"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/objects"
+	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
 	"github.com/jecolasurdo/marsrover/pkg/spatial"
 	"github.com/stretchr/testify/assert"
 )
@@ -343,21 +344,50 @@ func Test_RoverMove(t *testing.T) {
 
 	t.Run("moving into occupied space returns an error and does not call record movement",
 		func(t *testing.T) {
-			t.Fatal("not implemented")
-			// ctrl := gomock.NewController(t)
-			// defer ctrl.Finish()
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 
-			// env := mock_environmentiface.NewMockEnvironmenter(ctrl)
-			// env.EXPECT().
-			// 	PlaceObject(gomock.Any(), gomock.Any()).
-			// 	Return(nil).
-			// 	Times(2)
+			env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+			env.EXPECT().
+				PlaceObject(gomock.Any(), gomock.Any()).
+				Return(nil).
+				Times(1)
 
-			// roverBPosition := spatial.NewPoint(4, 5)
-			// roverB, err := objects.LaunchRover(spatial.HeadingEast, roverBPosition, env)
-			// assert.Nil(t, err)
+			env.EXPECT().
+				RecordMovement(gomock.Any(), gomock.Any()).
+				Times(0)
 
-			// err = roverB.Move()
-			// assert.EqualError(t, err, "unable to move, another object detectected at destination position")
+			initialPosition := spatial.NewPoint(4, 5)
+			attemptedPosition := spatial.NewPoint(4, 6)
+			env.EXPECT().
+				InspectPosition(gomock.Any()).
+				AnyTimes().
+				DoAndReturn(func(position spatial.Point) (bool, []objectiface.Objecter, error) {
+					switch position {
+					case initialPosition:
+						return false, nil, nil
+					case attemptedPosition:
+						// normally the second return value would not be nil
+						// if the first is true, but the Move method should
+						// ignore the second value in this case.
+						return true, nil, nil
+					default:
+						panic("InspectPosition mock received an unexpected position")
+					}
+				})
+
+			rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+			assert.Nil(t, err)
+
+			env.EXPECT().
+				FindObject(rover).
+				Return(true, &environmenttypes.ObjectPosition{
+					Object:   rover,
+					Position: initialPosition,
+				}).
+				Times(1)
+
+			err = rover.Move()
+			assert.EqualError(t, err, objects.ErrRoverIncompatibleObjectDetected(attemptedPosition).Error())
 		})
 }
