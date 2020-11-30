@@ -1,7 +1,9 @@
 # Mars Rover
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/jecolasurdo/marsrover)](https://pkg.go.dev/github.com/jecolasurdo/marsrover)
-[![Go Report Card](https://goreportcard.com/badge/github.com/jecolasurdo/marsrover)](https://goreportcard.com/report/github.com/jecolasurdo/marsrover)
 [![Build Status](https://travis-ci.org/jecolasurdo/marsrover.svg?branch=master)](https://travis-ci.org/jecolasurdo/marsrover)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jecolasurdo/marsrover)](https://goreportcard.com/report/github.com/jecolasurdo/marsrover)
+[![Maintainability](https://api.codeclimate.com/v1/badges/42f4814205a407bf7ca1/maintainability)](https://codeclimate.com/github/jecolasurdo/marsrover/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/42f4814205a407bf7ca1/test_coverage)](https://codeclimate.com/github/jecolasurdo/marsrover/test_coverage)
 
 ## Specifications
 
