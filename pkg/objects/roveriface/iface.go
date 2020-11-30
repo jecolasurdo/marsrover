@@ -1,3 +1,4 @@
+// Package roveriface provides contracts for basic rover behavior.
 package roveriface
 
 import (

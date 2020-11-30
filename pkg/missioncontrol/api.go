@@ -26,7 +26,7 @@ func NewMission(envBuilder environmentiface.EnvironmentBuilder, roverBuilder rov
 	}
 }
 
-// ExecuteMission executes a mission on an environment according to the supplied
+// ExecuteMission executes a mission in an environment according to the supplied
 // commands.
 //
 // This method will immediately halt the mission and return an error if there
@@ -182,7 +182,7 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 // with a list of remaining commands.
 //
 // The status of the rover is expressed as a single string with three values as
-// follow: {x coordinate, y coordinate, heading}
+// follow: "{x coordinate} {y coordinate} {heading}"
 //
 // If the method fails when navigating the rover, then only an error is
 // returned.
