@@ -87,10 +87,7 @@ func (m *Mission) EstablishEnvironment(commands []string) (environmentiface.Envi
 		return nil, nil, ErrParsingEnvironmentCommand(envCommand)
 	}
 
-	env, err := m.envBuilder.NewEnvironment(spatial.NewPoint(x, y))
-	if err != nil {
-		return nil, nil, err
-	}
+	env := m.envBuilder.NewEnvironment(spatial.NewPoint(x, y))
 
 	return env, commands[1:], nil
 }

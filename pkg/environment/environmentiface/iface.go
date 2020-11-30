@@ -10,7 +10,7 @@ import (
 // EnvironmentBuilder is anything that knows how to construct an abstract
 // environment.
 type EnvironmentBuilder interface {
-	NewEnvironment(spatial.Point) (Environmenter, error)
+	NewEnvironment(spatial.Point) Environmenter
 }
 
 // Environmenter is anything that can describe an environment.

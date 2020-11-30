@@ -37,12 +37,11 @@ func (m *MockEnvironmentBuilder) EXPECT() *MockEnvironmentBuilderMockRecorder {
 }
 
 // NewEnvironment mocks base method
-func (m *MockEnvironmentBuilder) NewEnvironment(arg0 spatial.Point) (environmentiface.Environmenter, error) {
+func (m *MockEnvironmentBuilder) NewEnvironment(arg0 spatial.Point) environmentiface.Environmenter {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NewEnvironment", arg0)
 	ret0, _ := ret[0].(environmentiface.Environmenter)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // NewEnvironment indicates an expected call of NewEnvironment
