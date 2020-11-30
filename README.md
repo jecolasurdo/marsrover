@@ -54,8 +54,10 @@ LMLMLMLMM
 MMRMMRMRRM
 ```
 **Output**
+```
 1 3 N
 5 1 E
+```
 
 ### Example 2
 **Input**
