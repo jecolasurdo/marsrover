@@ -54,8 +54,8 @@ func Test_ExecutionMission(t *testing.T) {
 	}{
 		{
 			name:     "happy path",
-			commands: []string{"3 3", "0 0 S", "LMMLM", "1 2 W", "LMLMRM"},
-			expStats: []string{"2 1 N", "1 0 S"},
+			commands: []string{"5 5", "1 2 N", "LMLMLMLMM", "3 3 E", "MMRMMRMRRM"},
+			expStats: []string{"1 3 N", "5 1 E"},
 			expErr:   nil,
 		},
 	}

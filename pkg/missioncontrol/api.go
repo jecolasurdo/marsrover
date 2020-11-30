@@ -146,7 +146,7 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 
 	x, err := strconv.Atoi(positionCommands[0])
 	if err != nil {
-		return nil, nil, ErrParsingEnvironmentCommand(commands[0])
+		return nil, nil, ErrParsingRoverCommand(commands[0])
 	}
 
 	y, err := strconv.Atoi(positionCommands[1])
@@ -156,7 +156,7 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 
 	heading := spatial.HeadingFromString(positionCommands[2])
 	if heading == spatial.HeadingUnknown {
-		return nil, nil, ErrParsingEnvironmentCommand(commands[0])
+		return nil, nil, ErrParsingRoverCommand(commands[0])
 	}
 
 	rover, err := m.roverBuilder.LaunchRover(heading, spatial.NewPoint(x, y), env)
@@ -190,8 +190,9 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (string, []string, error) {
 	var currentPosition *spatial.Point
 
-	if len(commands) > 0 {
-		for _, navigationCommand := range commands {
+	if len(commands) != 0 {
+		navigationCommands := strings.Split(commands[0], "")
+		for _, navigationCommand := range navigationCommands {
 			if navigationCommand == "M" {
 				err := rover.Move()
 				if err != nil {
@@ -202,7 +203,7 @@ func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (s
 
 			direction := spatial.DirectionFromString(navigationCommand)
 			if direction == spatial.DirectionUnknown {
-				return "", nil, ErrParsingEnvironmentCommand(commands[1])
+				return "", nil, ErrParsingRoverCommand(commands[1])
 			}
 
 			rover.ChangeHeading(direction)

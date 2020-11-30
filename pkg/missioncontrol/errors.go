@@ -2,9 +2,9 @@ package missioncontrol
 
 import "fmt"
 
-// ErrParsingEnvironmentCommand occurs when a coordinate command is malformed.
+// ErrParsingEnvironmentCommand occurs when an environment command is malformed.
 func ErrParsingEnvironmentCommand(cmd string) error {
-	return fmt.Errorf("error parsing coordinate command '%v'", cmd)
+	return fmt.Errorf("error parsing environment command '%v'", cmd)
 }
 
 // ErrParsingRoverCommand is returned if the commands supplied to the rover
