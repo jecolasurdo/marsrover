@@ -23,6 +23,11 @@ func Test_LaunchRover(t *testing.T) {
 			Return(nil).
 			AnyTimes()
 
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Return(false, nil, nil).
+			AnyTimes()
+
 		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, err)
 		assert.NotNil(t, rover)
@@ -39,13 +44,37 @@ func Test_LaunchRover(t *testing.T) {
 			Return(fmt.Errorf(testError)).
 			AnyTimes()
 
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Return(false, nil, nil).
+			AnyTimes()
+
 		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, rover)
 		assert.EqualError(t, err, testError)
 	})
 
 	t.Run("launching into a position already occupied by another rover returns nil, error", func(t *testing.T) {
-		t.Fatal("not implemented")
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		env := mock_environmentiface.NewMockEnvironmenter(ctrl)
+		// normally InspectPosition should not return nil in the second return
+		// parameter if the first is true. However, in this scenario, the rover
+		// should ignore the second (and third) parameter if the first is true.
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Times(1).
+			Return(true, nil, nil)
+
+		env.EXPECT().
+			PlaceObject(gomock.Any(), gomock.Any()).
+			Times(0)
+
+		position := spatial.NewPoint(4, 5)
+		rover, err := objects.LaunchRover(spatial.HeadingNorth, position, env)
+		assert.Nil(t, rover)
+		assert.EqualError(t, err, objects.ErrRoverIncompatibleObjectDetected(position).Error())
 	})
 }
 
@@ -65,6 +94,11 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			FindObject(gomock.Any()).
 			Return(true, &environmenttypes.ObjectPosition{Position: initialPosition}).
 			Times(1)
+
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Return(false, nil, nil).
+			AnyTimes()
 
 		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
@@ -90,6 +124,11 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			Return(false, nil).
 			Times(1)
 
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Return(false, nil, nil).
+			AnyTimes()
+
 		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
 
@@ -108,6 +147,11 @@ func Test_RoverCurrentHeading(t *testing.T) {
 		PlaceObject(gomock.Any(), gomock.Any()).
 		Return(nil).
 		Times(1)
+
+	env.EXPECT().
+		InspectPosition(gomock.Any()).
+		Return(false, nil, nil).
+		AnyTimes()
 
 	initialPosition := spatial.NewPoint(1, 1)
 	rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
@@ -139,6 +183,11 @@ func Test_RoverChangeHeading(t *testing.T) {
 			env.EXPECT().
 				PlaceObject(gomock.Any(), gomock.Any()).
 				Return(nil).
+				AnyTimes()
+
+			env.EXPECT().
+				InspectPosition(gomock.Any()).
+				Return(false, nil, nil).
 				AnyTimes()
 
 			initialPosition := spatial.NewPoint(1, 1)
@@ -195,6 +244,11 @@ func Test_RoverMove(t *testing.T) {
 					Return(nil).
 					Times(1)
 
+				env.EXPECT().
+					InspectPosition(gomock.Any()).
+					Return(false, nil, nil).
+					AnyTimes()
+
 				rover, err := objects.LaunchRover(testCase.initialHeading, testCase.initialPosition, env)
 				assert.Nil(t, err)
 
@@ -227,6 +281,11 @@ func Test_RoverMove(t *testing.T) {
 			Return(nil).
 			Times(1)
 
+		env.EXPECT().
+			InspectPosition(gomock.Any()).
+			Return(false, nil, nil).
+			AnyTimes()
+
 		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(5, 5), env)
 		assert.Nil(t, err)
 
@@ -254,6 +313,11 @@ func Test_RoverMove(t *testing.T) {
 				PlaceObject(gomock.Any(), gomock.Any()).
 				Return(nil).
 				Times(1)
+
+			env.EXPECT().
+				InspectPosition(gomock.Any()).
+				Return(false, nil, nil).
+				AnyTimes()
 
 			initialPosition := spatial.NewPoint(5, 5)
 			rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)

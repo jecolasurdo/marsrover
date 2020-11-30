@@ -18,14 +18,23 @@ type Rover struct {
 // rules of the supplied environment. If the rover cannot be placed at the
 // supplied position (due to the environment's rules), an error will be
 // returned, and the rover will not initialize (it will be nil).
-func LaunchRover(heading spatial.Heading, position spatial.Point, environment environmentiface.Environmenter) (*Rover, error) {
+func LaunchRover(heading spatial.Heading, position spatial.Point, env environmentiface.Environmenter) (*Rover, error) {
+	occupied, _, err := env.InspectPosition(position)
+	if err != nil {
+		return nil, err
+	}
+
+	if occupied {
+		return nil, ErrRoverIncompatibleObjectDetected(position)
+	}
+
 	rover := &Rover{
 		id:      uuid.New().String(),
-		env:     environment,
+		env:     env,
 		heading: heading,
 	}
 
-	err := environment.PlaceObject(rover, position)
+	err = env.PlaceObject(rover, position)
 	if err != nil {
 		return nil, err
 	}
