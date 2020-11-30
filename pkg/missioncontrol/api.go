@@ -64,7 +64,7 @@ func (m *Mission) ExecuteMission(commands []string) ([]string, error) {
 // If the method fails, only an error is returned.
 func (m *Mission) EstablishEnvironment(commands []string) (environmentiface.Environmenter, []string, error) {
 	if len(commands) == 0 {
-		return nil, nil, ErrParsingRoverCommand("")
+		return nil, nil, ErrParsingRoverCommand("expect at least one command")
 	}
 
 	envCommand := commands[0]
@@ -187,26 +187,28 @@ func (m *Mission) PlaceRoverInEnvironment(env environmentiface.Environmenter, co
 // If the method fails when navigating the rover, then only an error is
 // returned.
 func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (string, []string, error) {
-	for _, navigationCommand := range commands {
-		if navigationCommand == "M" {
-			err := rover.Move()
-			if err != nil {
-				return "", nil, err
+	if len(commands) > 0 {
+		for _, navigationCommand := range commands {
+			if navigationCommand == "M" {
+				err := rover.Move()
+				if err != nil {
+					return "", nil, err
+				}
+				continue
 			}
-			continue
+
+			direction := spatial.DirectionFromString(navigationCommand)
+			if direction == spatial.DirectionUnknown {
+				return "", nil, ErrParsingEnvironmentCommand(commands[1])
+			}
+
+			rover.ChangeHeading(direction)
 		}
 
-		direction := spatial.DirectionFromString(navigationCommand)
-		if direction == spatial.DirectionUnknown {
-			return "", nil, ErrParsingEnvironmentCommand(commands[1])
+		currentPosition, err := rover.CurrentPosition()
+		if err != nil {
+			return "", nil, err
 		}
-
-		rover.ChangeHeading(direction)
-	}
-
-	currentPosition, err := rover.CurrentPosition()
-	if err != nil {
-		return "", nil, err
 	}
 
 	currentHeading := spatial.HeadingToString(rover.CurrentHeading())
