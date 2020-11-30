@@ -1,6 +1,7 @@
 # Mars Rover
-
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/jecolasurdo/marsrover)](https://pkg.go.dev/github.com/jecolasurdo/marsrover)
 [![Go Report Card](https://goreportcard.com/badge/github.com/jecolasurdo/marsrover)](https://goreportcard.com/report/github.com/jecolasurdo/marsrover)
+[![Build Status](https://travis-ci.org/jecolasurdo/marsrover.svg?branch=master)](https://travis-ci.org/jecolasurdo/marsrover)
 
 ## Specifications
 
