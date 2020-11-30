@@ -7,6 +7,12 @@ import (
 	"github.com/jecolasurdo/marsrover/pkg/spatial"
 )
 
+// EnvironmentBuilder is anything that knows how to construct an abstract
+// environment.
+type EnvironmentBuilder interface {
+	NewEnvironment(spatial.Point) (Environmenter, error)
+}
+
 // Environmenter is anything that can describe an environment.
 type Environmenter interface {
 	// GetDimenstions returns the dimension of the environment.

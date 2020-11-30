@@ -5,12 +5,13 @@ type Direction string
 
 // Directions that can be applied to an object.
 const (
-	DirectionLeft  = "L"
-	DirectionRight = "R"
+	DirectionUnknown = ""
+	DirectionLeft    = "L"
+	DirectionRight   = "R"
 )
 
 // DirectionFromString converts a direction string ("L", "R") to a Direction.
-// This function will panic if it receives an invalid direction string.
+// If the supplied value is not L or R, the function will return DirectionUnknown.
 func DirectionFromString(d string) Direction {
 	switch d {
 	case "L":
@@ -18,6 +19,6 @@ func DirectionFromString(d string) Direction {
 	case "R":
 		return DirectionRight
 	default:
-		panic("unknown direction")
+		return DirectionUnknown
 	}
 }

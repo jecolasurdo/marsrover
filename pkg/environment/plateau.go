@@ -17,7 +17,7 @@ type Plateau struct {
 
 // NewPlateau instantiates a new Plateau and returns a reference to that
 // instance.
-func NewPlateau(dimensions spatial.Point) *Plateau {
+func (Plateau) NewPlateau(dimensions spatial.Point) *Plateau {
 	return &Plateau{
 		dimensions: dimensions,
 		objects:    make(objectStore),

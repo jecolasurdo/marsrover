@@ -3,6 +3,7 @@ package objects
 import (
 	"github.com/google/uuid"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
+	"github.com/jecolasurdo/marsrover/pkg/objects/roveriface"
 	"github.com/jecolasurdo/marsrover/pkg/spatial"
 )
 
@@ -24,7 +25,7 @@ type Rover struct {
 // A rover cannot be launched in a position that is occupied by another object
 // within the environment. In this caes, the rover will not be initialized, and
 // an error will be returned.
-func LaunchRover(heading spatial.Heading, position spatial.Point, env environmentiface.Environmenter) (*Rover, error) {
+func (Rover) LaunchRover(heading spatial.Heading, position spatial.Point, env environmentiface.Environmenter) (*Rover, error) {
 	occupied, _, err := env.InspectPosition(position)
 	if err != nil {
 		return nil, err
@@ -137,3 +138,6 @@ func (r *Rover) Move() error {
 
 	return r.env.RecordMovement(r, newPosition)
 }
+
+// Assert Rover implements RoverAPI
+var _ roveriface.RoverAPI = (*Rover)(nil)

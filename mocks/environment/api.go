@@ -6,11 +6,50 @@ package mock_environmentiface
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	environmentiface "github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
 	environmenttypes "github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	objectiface "github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
 	spatial "github.com/jecolasurdo/marsrover/pkg/spatial"
 	reflect "reflect"
 )
+
+// MockEnvironmentBuilder is a mock of EnvironmentBuilder interface
+type MockEnvironmentBuilder struct {
+	ctrl     *gomock.Controller
+	recorder *MockEnvironmentBuilderMockRecorder
+}
+
+// MockEnvironmentBuilderMockRecorder is the mock recorder for MockEnvironmentBuilder
+type MockEnvironmentBuilderMockRecorder struct {
+	mock *MockEnvironmentBuilder
+}
+
+// NewMockEnvironmentBuilder creates a new mock instance
+func NewMockEnvironmentBuilder(ctrl *gomock.Controller) *MockEnvironmentBuilder {
+	mock := &MockEnvironmentBuilder{ctrl: ctrl}
+	mock.recorder = &MockEnvironmentBuilderMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockEnvironmentBuilder) EXPECT() *MockEnvironmentBuilderMockRecorder {
+	return m.recorder
+}
+
+// NewEnvironment mocks base method
+func (m *MockEnvironmentBuilder) NewEnvironment(arg0 spatial.Point) (environmentiface.Environmenter, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewEnvironment", arg0)
+	ret0, _ := ret[0].(environmentiface.Environmenter)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NewEnvironment indicates an expected call of NewEnvironment
+func (mr *MockEnvironmentBuilderMockRecorder) NewEnvironment(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewEnvironment", reflect.TypeOf((*MockEnvironmentBuilder)(nil).NewEnvironment), arg0)
+}
 
 // MockEnvironmenter is a mock of Environmenter interface
 type MockEnvironmenter struct {

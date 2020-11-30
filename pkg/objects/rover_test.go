@@ -29,7 +29,7 @@ func Test_LaunchRover(t *testing.T) {
 			Return(false, nil, nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, err)
 		assert.NotNil(t, rover)
 	})
@@ -50,7 +50,7 @@ func Test_LaunchRover(t *testing.T) {
 			Return(false, nil, nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(1, 1), env)
 		assert.Nil(t, rover)
 		assert.EqualError(t, err, testError)
 	})
@@ -73,7 +73,7 @@ func Test_LaunchRover(t *testing.T) {
 			Times(0)
 
 		position := spatial.NewPoint(4, 5)
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, position, env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, position, env)
 		assert.Nil(t, rover)
 		assert.EqualError(t, err, objects.ErrRoverIncompatibleObjectDetected(position).Error())
 	})
@@ -101,7 +101,7 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			Return(false, nil, nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
 
 		currentPosition, err := rover.CurrentPosition()
@@ -130,7 +130,7 @@ func Test_RoverCurrentPosition(t *testing.T) {
 			Return(false, nil, nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 		assert.Nil(t, err)
 
 		currentPosition, err := rover.CurrentPosition()
@@ -155,7 +155,7 @@ func Test_RoverCurrentHeading(t *testing.T) {
 		AnyTimes()
 
 	initialPosition := spatial.NewPoint(1, 1)
-	rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+	rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 	assert.Nil(t, err)
 
 	currentHeading := rover.CurrentHeading()
@@ -193,7 +193,7 @@ func Test_RoverChangeHeading(t *testing.T) {
 
 			initialPosition := spatial.NewPoint(1, 1)
 			initialHeading := spatial.HeadingFromString(testCase.initialHeading)
-			rover, err := objects.LaunchRover(initialHeading, initialPosition, env)
+			rover, err := objects.Rover{}.LaunchRover(initialHeading, initialPosition, env)
 			assert.Nil(t, err)
 
 			rover.ChangeHeading(spatial.DirectionFromString(testCase.direction))
@@ -250,7 +250,7 @@ func Test_RoverMove(t *testing.T) {
 					Return(false, nil, nil).
 					AnyTimes()
 
-				rover, err := objects.LaunchRover(testCase.initialHeading, testCase.initialPosition, env)
+				rover, err := objects.Rover{}.LaunchRover(testCase.initialHeading, testCase.initialPosition, env)
 				assert.Nil(t, err)
 
 				env.EXPECT().
@@ -287,7 +287,7 @@ func Test_RoverMove(t *testing.T) {
 			Return(false, nil, nil).
 			AnyTimes()
 
-		rover, err := objects.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(5, 5), env)
+		rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, spatial.NewPoint(5, 5), env)
 		assert.Nil(t, err)
 
 		env.EXPECT().
@@ -321,7 +321,7 @@ func Test_RoverMove(t *testing.T) {
 				AnyTimes()
 
 			initialPosition := spatial.NewPoint(5, 5)
-			rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+			rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 			assert.Nil(t, err)
 
 			env.EXPECT().
@@ -376,7 +376,7 @@ func Test_RoverMove(t *testing.T) {
 					}
 				})
 
-			rover, err := objects.LaunchRover(spatial.HeadingNorth, initialPosition, env)
+			rover, err := objects.Rover{}.LaunchRover(spatial.HeadingNorth, initialPosition, env)
 			assert.Nil(t, err)
 
 			env.EXPECT().
