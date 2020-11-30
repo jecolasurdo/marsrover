@@ -196,6 +196,9 @@ func (m *Mission) NavigateRover(rover roveriface.RoverAPI, commands []string) (s
 			if navigationCommand == "M" {
 				err := rover.Move()
 				if err != nil {
+					if strings.Contains(err.Error(), "incompatible object") {
+						continue
+					}
 					return "", nil, err
 				}
 				continue
