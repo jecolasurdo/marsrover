@@ -2,9 +2,10 @@ language: go
 go:
   - "1.15.x"
 env:
-  - COVER=-coverprofile=c.out
+  global: 
+    - CC_TEST_REPORTER_ID=b8fee6bde3158dd8c0c16ac750dbef6ac5497dce0b54364fe9bfefe5e830a149
 script:
-  - go test -race $COVER ./...
+  - go test -race -coverprofile=c.out ./...
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
 after_script:
