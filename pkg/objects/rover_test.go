@@ -95,7 +95,7 @@ func Test_RoverCurrentPosition(t *testing.T) {
 
 		currentPosition, err := rover.CurrentPosition()
 		assert.Nil(t, currentPosition)
-		assert.EqualError(t, err, "this rover no longer exists within its environment")
+		assert.EqualError(t, err, objects.ErrRoverExpelledFromEnvironment(rover).Error())
 	})
 }
 
@@ -241,7 +241,7 @@ func Test_RoverMove(t *testing.T) {
 			Times(0)
 
 		err = rover.Move()
-		assert.EqualError(t, err, "this rover no longer exists within its environment")
+		assert.EqualError(t, err, objects.ErrRoverExpelledFromEnvironment(rover).Error())
 	})
 
 	t.Run("move reports error if there's an error recording the movement in the environment",

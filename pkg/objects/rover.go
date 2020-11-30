@@ -1,8 +1,6 @@
 package objects
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
 	"github.com/jecolasurdo/marsrover/pkg/spatial"
@@ -46,7 +44,7 @@ func (r *Rover) ID() string {
 func (r *Rover) CurrentPosition() (*spatial.Point, error) {
 	found, objectPosition := r.env.FindObject(r)
 	if !found {
-		return nil, fmt.Errorf("this rover no longer exists within its environment")
+		return nil, ErrRoverExpelledFromEnvironment(r)
 	}
 	return &objectPosition.Position, nil
 }
@@ -98,7 +96,7 @@ func (r *Rover) ChangeHeading(direction spatial.Direction) {
 func (r *Rover) Move() error {
 	found, objectPosition := r.env.FindObject(r)
 	if !found {
-		return fmt.Errorf("this rover no longer exists within its environment")
+		return ErrRoverExpelledFromEnvironment(r)
 	}
 
 	newPosition := objectPosition.Position
