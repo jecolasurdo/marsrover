@@ -64,11 +64,73 @@ func Test_ExecutionMission(t *testing.T) {
 			expStats: []string{"2 1 N", "1 0 S"},
 			expErr:   nil,
 		},
+		{
+			name:     "no commands returns nil, nil",
+			commands: nil,
+			expStats: []string{},
+			expErr:   nil,
+		},
+		{
+			name:     "invalid environment command",
+			commands: []string{"invalid"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingEnvironmentCommand("invalid"),
+		},
+		{
+			name:     "invalid env x",
+			commands: []string{"a 10"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingEnvironmentCommand("a 10"),
+		},
+		{
+			name:     "invalid env y",
+			commands: []string{"10 a"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingEnvironmentCommand("10 a"),
+		},
+		{
+			name:     "incomplete rover command",
+			commands: []string{"10 10", "1 2"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("expected at least two commands"),
+		},
+		{
+			name:     "invalid position command",
+			commands: []string{"10 10", "1 2 3 4", "M"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("1 2 3 4"),
+		},
+		{
+			name:     "invalid rover x",
+			commands: []string{"10 10", "a 2 N", "M"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("a 2 N"),
+		},
+		{
+			name:     "invalid rover y",
+			commands: []string{"10 10", "1 a N", "M"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("1 a N"),
+		},
+		{
+			name:     "invalid heading",
+			commands: []string{"10 10", "1 2 F", "M"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("1 2 F"),
+		},
+		{
+			name:     "elided movement results in an error",
+			commands: []string{"10 10", "1 2 F", ""},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("1 2 F"),
+		},
+		{
+			name:     "invalid movement cmd returns error",
+			commands: []string{"10 10", "1 2 N", "D"},
+			expStats: nil,
+			expErr:   missioncontrol.ErrParsingRoverCommand("D"),
+		},
 	}
-	// happy path returns statuses, nil
-	// error establishing environment returns error
-	// no commands, returns nil, nil
-	// invalid commands returns nil, error
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -99,50 +161,8 @@ func Test_ExecutionMission(t *testing.T) {
 			if testCase.expErr == nil {
 				assert.NoError(t, err)
 			} else {
-				assert.EqualError(t, testCase.expErr, err.Error())
+				assert.EqualError(t, err, testCase.expErr.Error())
 			}
 		})
 	}
 }
-
-// func Test_EstablishEnvironment(t *testing.T) {
-// 	t.Skip()
-// 	// happy path returns environment, remaining commands, nil
-// 	// no commands, returns nil, nil, error
-// 	// not two coordinates returns error
-// 	// invalid x returns error
-// 	// invalid y returns error
-// 	// newenvironment error returns error
-// 	// one valid command returns env, nil, nil
-// }
-
-// func Test_DeployAndNavigateRover(t *testing.T) {
-// 	t.Skip()
-// 	// happy path returns status, remaining commands, nil
-// 	// nil environment returns error
-// 	// less than 2 commands returns error
-// 	// valid placement invalid navigate returns error
-// 	// invalid placement valid navigate returns error
-// }
-
-// func Test_PlaceRoverInEnvironment(t *testing.T) {
-// 	t.Skip()
-// 	// happy path returns rover, remaining commands, nil
-// 	// nil environment returns error
-// 	// less than three positions returns error
-// 	// invalid x returns error
-// 	// invalid y returns error
-// 	// invalid heading returns error
-// 	// error launching rover returns error
-// }
-
-// func Test_NavigateRover(t *testing.T) {
-// 	t.Skip()
-// 	// happy path returns stats, remaining commands, nil
-// 	// nil rover returns error
-// 	// empty commands returns stats, remaining commands, nil
-// 	// move error returns error
-// 	// currentposition error returns error
-// 	// move command calls move
-// 	// invalid direction returns error
-// }
