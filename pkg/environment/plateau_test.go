@@ -69,7 +69,7 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 	t.Run("nil object returns an error", func(t *testing.T) {
 		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		err := p.PlaceObject(nil, spatial.Point{X: 1, Y: 1})
-		assert.EqualError(t, err, "a nil object cannot be placed in the environment")
+		assert.EqualError(t, err, environment.ErrNilObject().Error())
 	})
 
 	t.Run("illegal coordinate returns an error", func(t *testing.T) {
@@ -107,8 +107,9 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 
 				p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
-				err := p.PlaceObject(mockObject, spatial.Point{X: testCase.X, Y: testCase.Y})
-				assert.EqualError(t, err, "an object cannot be placed outside the bounds of the environment")
+				position := spatial.NewPoint(testCase.X, testCase.Y)
+				err := p.PlaceObject(mockObject, position)
+				assert.EqualError(t, err, environment.ErrPositionOutsideBounds(position).Error())
 			})
 		}
 	})
@@ -125,7 +126,7 @@ func Test_PlateauPlaceObjects(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = p.PlaceObject(mockObject, spatial.Point{X: 1, Y: 1})
-		assert.EqualError(t, err, "object with ID 'A' already exists within the environment")
+		assert.EqualError(t, err, environment.ErrObjectAlreadyExists(mockObject).Error())
 	})
 
 	t.Run("multiple objects can be placed at the same location", func(t *testing.T) {
@@ -191,7 +192,7 @@ func Test_PlateauRecordMovement(t *testing.T) {
 	t.Run("cannot record the movement of a nil object", func(t *testing.T) {
 		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		err := p.RecordMovement(nil, spatial.Point{X: 3, Y: 3})
-		assert.Error(t, err, "cannot record the movement of a nil object")
+		assert.Error(t, err, environment.ErrNilObject().Error())
 	})
 
 	t.Run("An object cannot be moved to an coordinate outside of the environment.", func(t *testing.T) {
@@ -229,11 +230,13 @@ func Test_PlateauRecordMovement(t *testing.T) {
 				mockObject := mock_objectiface.NewMockObjecter(ctrl)
 
 				p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
-				err := p.PlaceObject(mockObject, spatial.Point{X: 5, Y: 5})
+				initialPosition := spatial.NewPoint(5, 5)
+				err := p.PlaceObject(mockObject, initialPosition)
 				assert.NoError(t, err)
 
-				err = p.RecordMovement(mockObject, spatial.Point{X: testCase.X, Y: testCase.Y})
-				assert.EqualError(t, err, "an object cannot be placed outside the bounds of the environment")
+				newPosition := spatial.NewPoint(testCase.X, testCase.Y)
+				err = p.RecordMovement(mockObject, newPosition)
+				assert.EqualError(t, err, environment.ErrPositionOutsideBounds(newPosition).Error())
 			})
 		}
 	})
@@ -247,7 +250,7 @@ func Test_PlateauRecordMovement(t *testing.T) {
 		p := environment.NewPlateau(spatial.Point{X: 10, Y: 10})
 		err := p.RecordMovement(mockObject, spatial.Point{X: 5, Y: 5})
 
-		assert.EqualError(t, err, "cannot move an object that has not been placed in the environment")
+		assert.EqualError(t, err, environment.ErrObjectDoesNotExist(mockObject).Error())
 	})
 
 	t.Run("moving an object effectively moves the object", func(t *testing.T) {
@@ -363,6 +366,6 @@ func Test_PlateauInspectPosition(t *testing.T) {
 		found, objects, err := p.InspectPosition(illegalPosition)
 		assert.False(t, found)
 		assert.Nil(t, objects)
-		assert.EqualError(t, err, "the supplied position is outside the bounds of the environment")
+		assert.EqualError(t, err, environment.ErrPositionOutsideBounds(illegalPosition).Error())
 	})
 }

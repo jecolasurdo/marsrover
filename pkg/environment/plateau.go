@@ -1,8 +1,6 @@
 package environment
 
 import (
-	"fmt"
-
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmentiface"
 	"github.com/jecolasurdo/marsrover/pkg/environment/environmenttypes"
 	"github.com/jecolasurdo/marsrover/pkg/objects/objectiface"
@@ -50,7 +48,7 @@ func (p *Plateau) GetDimensions() spatial.Point {
 // specified position.
 func (p *Plateau) PlaceObject(object objectiface.Objecter, position spatial.Point) error {
 	if object == nil {
-		return fmt.Errorf("a nil object cannot be placed in the environment")
+		return ErrNilObject()
 	}
 
 	err := p.verifyPositionIsLegal(position)
@@ -59,7 +57,7 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position spatial.Poin
 	}
 
 	if found, _ := p.FindObject(object); found {
-		return fmt.Errorf("object with ID '%s' already exists within the environment", object.ID())
+		return ErrObjectAlreadyExists(object)
 	}
 
 	p.placeObjectUnchecked(object, position)
@@ -70,7 +68,7 @@ func (p *Plateau) PlaceObject(object objectiface.Objecter, position spatial.Poin
 // environment to another.
 func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition spatial.Point) error {
 	if object == nil {
-		return fmt.Errorf("cannot record the movement of a nil object")
+		return ErrNilObject()
 	}
 
 	err := p.verifyPositionIsLegal(newPosition)
@@ -80,7 +78,7 @@ func (p *Plateau) RecordMovement(object objectiface.Objecter, newPosition spatia
 
 	found, objectPosition := p.FindObject(object)
 	if !found {
-		return fmt.Errorf("cannot move an object that has not been placed in the environment")
+		return ErrObjectDoesNotExist(object)
 	}
 
 	p.removeObjectUnchecked(objectPosition.Object)
@@ -143,7 +141,7 @@ func (p *Plateau) InspectPosition(positionToInspect spatial.Point) (bool, []obje
 func (p *Plateau) verifyPositionIsLegal(position spatial.Point) error {
 	if position.X > p.dimensions.X || position.Y > p.dimensions.Y ||
 		position.Y < 0 || position.X < 0 {
-		return fmt.Errorf("the supplied position is outside the bounds of the environment")
+		return ErrPositionOutsideBounds(position)
 	}
 	return nil
 }
