@@ -124,7 +124,7 @@ Example 1:
 ```
 $ cat ./sampleinput/testinput1.txt | ./marsrover
 1 3 N
-1 0 S
+5 1 E
 $
 ```
 
